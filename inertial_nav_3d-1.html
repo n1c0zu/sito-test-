@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0e14">
+<title>INS · 3D Navigator</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0e14; --bg2:#0f1520; --panel:#111927; --border:#1e3a52;
+    --accent:#00e5ff; --accent2:#ff6b35; --accent3:#39ff14;
+    --warn:#ffcc00; --text:#c8dde8; --dim:#4a6a7a;
+    --font-ui:'Orbitron',monospace; --font-num:'Share Tech Mono',monospace;
+    --glow:0 0 12px rgba(0,229,255,0.4); --glow2:0 0 12px rgba(57,255,20,0.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font-num);}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);}
+
+  /* PERMISSION SCREEN */
+  #perm-screen{position:fixed;inset:0;z-index:500;background:var(--bg);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;}
+  #perm-screen h2{font-family:var(--font-ui);color:var(--accent);font-size:13px;letter-spacing:3px;text-align:center;text-shadow:var(--glow);}
+  #perm-screen p{font-size:11px;color:var(--dim);text-align:center;line-height:1.7;max-width:340px;}
+  #debug-log{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--border);
+    border-radius:4px;padding:10px;font-size:10px;color:var(--accent3);
+    height:150px;overflow-y:auto;line-height:1.6;font-family:var(--font-num);}
+  #https-warn{font-size:9px;color:#ff4040;text-align:center;}
+  .btn-perm{font-family:var(--font-ui);font-size:11px;letter-spacing:2px;padding:12px 28px;
+    border:1px solid var(--accent);background:transparent;color:var(--accent);
+    border-radius:4px;cursor:pointer;box-shadow:var(--glow);}
+
+  /* APP */
+  #app{display:none;flex-direction:column;height:100vh;}
+  #header{background:var(--bg2);border-bottom:1px solid var(--border);padding:7px 12px;
+    display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  #header h1{font-family:var(--font-ui);font-size:12px;font-weight:900;letter-spacing:4px;color:var(--accent);text-shadow:var(--glow);}
+  .dots{display:flex;gap:8px;align-items:center;}
+  .dot{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .dot-circle{width:8px;height:8px;border-radius:50%;background:var(--dim);transition:background .3s;}
+  .dot-circle.ok{background:var(--accent3);box-shadow:var(--glow2);animation:blink 2s infinite;}
+  .dot-circle.warn{background:var(--warn);}
+  .dot-lbl{font-family:var(--font-ui);font-size:5.5px;letter-spacing:1px;color:var(--dim);}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+
+  #main{display:flex;flex:1;overflow:hidden;}
+  #map-panel{flex:1;position:relative;overflow:hidden;background:var(--bg);}
+  #map-canvas{display:block;}
+
+  /* SIDE */
+  #side-panel{width:150px;flex-shrink:0;background:var(--bg2);display:flex;flex-direction:column;overflow-y:auto;}
+  #side-panel::-webkit-scrollbar{width:3px;}
+  #side-panel::-webkit-scrollbar-thumb{background:var(--border);}
+  .db{border-bottom:1px solid var(--border);padding:8px 9px;}
+  .db label{font-family:var(--font-ui);font-size:6.5px;letter-spacing:2px;color:var(--dim);display:block;margin-bottom:3px;}
+  .dv{font-size:14px;color:var(--accent);text-shadow:var(--glow);line-height:1.2;}
+  .dv.g{color:var(--accent3);text-shadow:var(--glow2);}
+  .dv.o{color:var(--accent2);}
+  .dv small{font-size:9px;color:var(--dim);}
+  .mini{font-size:10.5px;line-height:1.8;color:var(--text);}
+
+  /* BOTTOM */
+  #bottom-bar{background:var(--bg2);border-top:1px solid var(--border);
+    padding:7px 8px;display:flex;gap:6px;flex-shrink:0;align-items:center;}
+  .btn{font-family:var(--font-ui);font-size:7px;letter-spacing:1.5px;padding:7px 8px;
+    border:1px solid var(--border);background:var(--panel);color:var(--text);
+    border-radius:3px;cursor:pointer;transition:all .15s;user-select:none;white-space:nowrap;}
+  .btn:active{transform:scale(.95);}
+  .btn.p{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow);}
+  .btn.d{border-color:#ff4040;color:#ff4040;}
+  .btn.s{border-color:var(--accent3);color:var(--accent3);}
+  .btn.active{background:var(--accent);color:var(--bg);box-shadow:var(--glow);}
+  #lc{font-size:9px;color:var(--dim);margin-left:auto;}
+
+  /* TOAST */
+  #toast{position:fixed;bottom:65px;left:50%;transform:translateX(-50%);
+    background:var(--panel);border:1px solid var(--accent);color:var(--accent);
+    font-family:var(--font-ui);font-size:9px;letter-spacing:2px;
+    padding:7px 14px;border-radius:4px;z-index:1000;opacity:0;transition:opacity .3s;
+    pointer-events:none;box-shadow:var(--glow);white-space:nowrap;}
+  #toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div id="perm-screen">
+  <h2>INS · 3D NAVIGATOR</h2>
+  <p>Apri questo file via <strong style="color:var(--accent)">HTTPS</strong> o localhost per abilitare i sensori su Android Chrome.<br>Tocca AVVIA per richiedere i permessi.</p>
+  <div id="debug-log">[diagnostica sensori]
+</div>
+  <p id="https-warn"></p>
+  <button class="btn-perm" onclick="initSensors()">&#9654; AVVIA</button>
+</div>
+
+<div id="app">
+  <div id="header">
+    <h1>INS 3D</h1>
+    <div class="dots">
+      <div class="dot"><div class="dot-circle" id="d-accel"></div><div class="dot-lbl">ACC</div></div>
+      <div class="dot"><div class="dot-circle" id="d-gyro"></div><div class="dot-lbl">GYRO</div></div>
+      <div class="dot"><div class="dot-circle" id="d-mag"></div><div class="dot-lbl">MAG</div></div>
+      <div class="dot"><div class="dot-circle" id="d-track"></div><div class="dot-lbl">TRACK</div></div>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="map-panel"><canvas id="map-canvas"></canvas></div>
+    <div id="side-panel">
+      <div class="db"><label>POSIZIONE</label>
+        <div class="dv" id="px">0.00 <small>m X</small></div>
+        <div class="dv" id="py">0.00 <small>m Y</small></div>
+        <div class="dv o" id="pz">0.00 <small>m Z</small></div>
+      </div>
+      <div class="db"><label>VELOCITA TOT</label>
+        <div class="dv g" id="spd">0.00 <small>m/s</small></div>
+      </div>
+      <div class="db"><label>VEL X Y Z</label>
+        <div class="mini">X:<span id="vx"> 0.00</span><br>Y:<span id="vy"> 0.00</span><br>Z:<span id="vz"> 0.00</span></div>
+      </div>
+      <div class="db"><label>HEADING YAW</label>
+        <div class="dv" id="hdg">--- </div>
+      </div>
+      <div class="db"><label>BUSSOLA</label>
+        <canvas id="compass-canvas" width="128" height="128"></canvas>
+      </div>
+      <div class="db"><label>ASSETTO</label>
+        <canvas id="attitude-canvas" width="128" height="128"></canvas>
+      </div>
+      <div class="db"><label>PITCH ROLL</label>
+        <div class="mini">P:<span id="pitch"> 0.0</span><br>R:<span id="roll"> 0.0</span></div>
+      </div>
+      <div class="db"><label>ACCEL RAW</label>
+        <div class="mini">X:<span id="arx"> 0.00</span><br>Y:<span id="ary"> 0.00</span><br>Z:<span id="arz"> 0.00</span></div>
+      </div>
+      <div class="db"><label>PUNTI LOG</label>
+        <div class="dv" id="lpts">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="bottom-bar">
+    <button class="btn p" id="btn-start" onclick="toggleTracking()">&#9654; START</button>
+    <button class="btn d" onclick="resetNav()">&#10227; RESET</button>
+    <button class="btn s" onclick="exportLog()">&#8595; CSV</button>
+    <button class="btn" onclick="calibrate()">CAL</button>
+    <span id="lc">0 pts</span>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════ DEBUG ═══════════════════
+const dbgEl = document.getElementById('debug-log');
+function log(msg, color) {
+  const d = new Date();
+  const ts = d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+  const div = document.createElement('div');
+  div.style.color = color || '#c8dde8';
+  div.textContent = '['+ts+'] '+msg;
+  dbgEl.appendChild(div);
+  dbgEl.scrollTop = dbgEl.scrollHeight;
+}
+
+// HTTPS check
+if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  document.getElementById('https-warn').textContent = 'ATTENZIONE: serve HTTPS per i sensori su Android!';
+  log('PROTOCOLLO: '+location.protocol+' — i sensori potrebbero non funzionare!', '#ff4040');
+} else {
+  log('Protocollo OK: '+location.protocol, '#39ff14');
+}
+log('UA: '+navigator.userAgent.substring(0,60));
+
+// ═══════════════════ STATE ═══════════════════
+const S = {
+  tracking:false,
+  px:0, py:0, pz:0,
+  vx:0, vy:0, vz:0,
+  pitch:0, roll:0, yaw:0,
+  ax:0, ay:0, az:9.81,
+  lax:0, lay:0, laz:0, hasLinear:false,
+  gx:0, gy:0, gz:0,
+  hasAccel:false, hasGyro:false, hasMag:false, hasAbsOri:false,
+  bx:0, by:0, bz:0,
+  lastT:null,
+  alpha:0.96,
+  stillCount:0,
+  trail:[], logData:[],
+};
+
+// ═══════════════════ SENSORS ═══════════════════
+async function initSensors() {
+  log('Avvio inizializzazione sensori...');
+
+  // iOS permission
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+    try {
+      const r = await DeviceMotionEvent.requestPermission();
+      log('DeviceMotion perm: '+r, r==='granted'?'#39ff14':'#ff4040');
+      if (r !== 'granted') { log('Permesso negato!','#ff4040'); return; }
+    } catch(e) { log('Err DeviceMotion perm: '+e,'#ff4040'); }
+  }
+  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      const r = await DeviceOrientationEvent.requestPermission();
+      log('DeviceOrientation perm: '+r, r==='granted'?'#39ff14':'#ff4040');
+    } catch(e) { log('Err DeviceOri perm: '+e,'#ff4040'); }
+  }
+
+  // DeviceMotion (accel + gyro) — works on HTTP too on most Androids
+  if ('DeviceMotionEvent' in window) {
+    window.addEventListener('devicemotion', function(e) {
+      const a = e.accelerationIncludingGravity;
+      if (a && a.x !== null) {
+        S.ax = a.x||0; S.ay = a.y||0; S.az = a.z||0;
+        if (!S.hasAccel) { S.hasAccel=true; dotOK('d-accel'); log('accelerometro OK','#39ff14'); }
+      }
+      const la = e.acceleration;
+      if (la && la.x !== null) {
+        S.lax = la.x||0; S.lay = la.y||0; S.laz = la.z||0;
+        S.hasLinear = true;
+      }
+      const g = e.rotationRate;
+      if (g && g.alpha !== null) {
+        // deg/s to rad/s — Android: alpha=z, beta=x, gamma=y
+        S.gz = (g.alpha||0)*Math.PI/180;
+        S.gx = (g.beta ||0)*Math.PI/180;
+        S.gy = (g.gamma||0)*Math.PI/180;
+        if (!S.hasGyro) { S.hasGyro=true; dotOK('d-gyro'); log('giroscopio OK','#39ff14'); }
+      }
+    }, {passive:true});
+    log('DeviceMotion listener OK');
+  } else {
+    log('DeviceMotion non supportato','#ff4040');
+  }
+
+  // Absolute orientation (Android Chrome 67+) — requires HTTPS
+  if ('ondeviceorientationabsolute' in window) {
+    window.addEventListener('deviceorientationabsolute', function(e) {
+      if (e.alpha === null) return;
+      // alpha = compass heading (0=N, 90=W on Android), beta=pitch, gamma=roll
+      // On Android: alpha goes CW from North
+      S.yaw   = ((360 - (e.alpha||0)) % 360) * Math.PI/180; // convert to CCW math convention
+      S.pitch = (e.beta ||0) * Math.PI/180;
+      S.roll  = (e.gamma||0) * Math.PI/180;
+      S.hasMag=true; S.hasAbsOri=true;
+      if (!S._magLogged) { S._magLogged=true; dotOK('d-mag'); log('magnetometro assoluto OK','#39ff14'); }
+    }, {passive:true});
+    log('deviceorientationabsolute listener OK');
+  } else {
+    log('deviceorientationabsolute non trovato — provo fallback','#ffcc00');
+  }
+
+  // Relative orientation fallback
+  window.addEventListener('deviceorientation', function(e) {
+    if (S.hasAbsOri) return;
+    if (e.alpha === null) return;
+    S.yaw   = ((360 - (e.alpha||0)) % 360) * Math.PI/180;
+    S.pitch = (e.beta ||0) * Math.PI/180;
+    S.roll  = (e.gamma||0) * Math.PI/180;
+    if (!S.hasMag) { S.hasMag=true; dotOK('d-mag'); log('orientamento relativo OK (no magnetometro assoluto)','#ffcc00'); }
+  }, {passive:true});
+  log('deviceorientation fallback listener OK');
+
+  // New Generic Sensor API (Chrome 67+, needs HTTPS + permissions)
+  tryNewSensorAPI();
+
+  setTimeout(() => {
+    document.getElementById('perm-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    startLoop();
+    log('App avviata','#39ff14');
+  }, 1500);
+}
+
+function tryNewSensorAPI() {
+  // AbsoluteOrientationSensor
+  if (typeof AbsoluteOrientationSensor !== 'undefined') {
+    try {
+      const s = new AbsoluteOrientationSensor({frequency:60});
+      s.addEventListener('error', e => log('AbsOriSensor err: '+e.error.message,'#ffcc00'));
+      s.addEventListener('reading', () => {
+        const q = s.quaternion; // [x,y,z,w]
+        const angles = quatToEuler(q[0],q[1],q[2],q[3]);
+        S.pitch=angles.pitch; S.roll=angles.roll; S.yaw=angles.yaw;
+        if (!S.hasMag) { S.hasMag=true; S.hasAbsOri=true; dotOK('d-mag'); log('AbsoluteOrientationSensor OK','#39ff14'); }
+      });
+      s.start();
+      log('AbsoluteOrientationSensor avviato');
+    } catch(e) { log('AbsOriSensor: '+e.message,'#ffcc00'); }
+  }
+
+  if (typeof LinearAccelerationSensor !== 'undefined') {
+    try {
+      const s = new LinearAccelerationSensor({frequency:60});
+      s.addEventListener('error', e => log('LinAccSensor err: '+e.error.message,'#ffcc00'));
+      s.addEventListener('reading', () => {
+        S.lax=s.x||0; S.lay=s.y||0; S.laz=s.z||0;
+        S.hasLinear=true;
+        if (!S.hasAccel) { S.hasAccel=true; dotOK('d-accel'); log('LinearAccelerationSensor OK','#39ff14'); }
+      });
+      s.start();
+      log('LinearAccelerationSensor avviato');
+    } catch(e) { log('LinAccSensor: '+e.message,'#ffcc00'); }
+  }
+
+  if (typeof Gyroscope !== 'undefined') {
+    try {
+      const s = new Gyroscope({frequency:60});
+      s.addEventListener('error', e => log('Gyro err: '+e.error.message,'#ffcc00'));
+      s.addEventListener('reading', () => {
+        S.gx=s.x||0; S.gy=s.y||0; S.gz=s.z||0;
+        if (!S.hasGyro) { S.hasGyro=true; dotOK('d-gyro'); log('Gyroscope (new API) OK','#39ff14'); }
+      });
+      s.start();
+      log('Gyroscope (new API) avviato');
+    } catch(e) { log('Gyro new API: '+e.message,'#ffcc00'); }
+  }
+}
+
+function quatToEuler(x,y,z,w) {
+  const roll  = Math.atan2(2*(w*x+y*z), 1-2*(x*x+y*y));
+  const sinp  = 2*(w*y-z*x);
+  const pitch = Math.abs(sinp)>=1 ? Math.sign(sinp)*Math.PI/2 : Math.asin(sinp);
+  const yaw   = Math.atan2(2*(w*z+x*y), 1-2*(y*y+z*z));
+  return {roll,pitch,yaw};
+}
+
+function dotOK(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('ok');
+}
+
+// ═══════════════════ LOOP ═══════════════════
+function startLoop() {
+  function loop(ts) {
+    update(ts); drawMap(); drawCompass(); drawAttitude(); updateUI();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// ═══════════════════ INS UPDATE ═══════════════════
+function update(ts) {
+  if (!S.lastT) { S.lastT=ts; return; }
+  const dt = Math.min((ts-S.lastT)/1000, 0.05);
+  S.lastT = ts;
+
+  // Attitude from accel if no mag/abs-orientation
+  if (!S.hasMag) {
+    const nm = Math.sqrt(S.ax*S.ax+S.ay*S.ay+S.az*S.az)||1;
+    const pAcc = Math.asin(Math.max(-1,Math.min(1,S.ax/nm)));
+    const rAcc = Math.atan2(-S.ay,-S.az);
+    if (S.hasGyro) {
+      S.pitch = S.alpha*(S.pitch+S.gx*dt)+(1-S.alpha)*pAcc;
+      S.roll  = S.alpha*(S.roll +S.gy*dt)+(1-S.alpha)*rAcc;
+    } else {
+      S.pitch=pAcc; S.roll=rAcc;
+    }
+  }
+
+  if (!S.tracking) return;
+
+  // Best linear acceleration source
+  let lax,lay,laz;
+  if (S.hasLinear) {
+    lax=S.lax-S.bx; lay=S.lay-S.by; laz=S.laz-S.bz;
+  } else {
+    // subtract gravity manually
+    const g=9.81;
+    lax = S.ax - g*Math.sin(S.pitch)*Math.cos(S.roll);
+    lay = S.ay + g*Math.sin(S.roll);
+    laz = S.az - g*Math.cos(S.pitch)*Math.cos(S.roll);
+    lax-=S.bx; lay-=S.by; laz-=S.bz;
+  }
+
+  // Body to world frame (ZYX Euler)
+  const cp=Math.cos(S.pitch),sp=Math.sin(S.pitch);
+  const cr=Math.cos(S.roll), sr=Math.sin(S.roll);
+  const cy=Math.cos(S.yaw),  sy=Math.sin(S.yaw);
+  const wx=(cy*cp)*lax+(cy*sp*sr-sy*cr)*lay+(cy*sp*cr+sy*sr)*laz;
+  const wy=(sy*cp)*lax+(sy*sp*sr+cy*cr)*lay+(sy*sp*cr-cy*sr)*laz;
+  const wz=(-sp)*lax+(cp*sr)*lay+(cp*cr)*laz;
+
+  // ZUPT
+  const am=Math.sqrt(lax*lax+lay*lay+laz*laz);
+  if (am<0.15) {
+    S.stillCount++;
+    if (S.stillCount>10) { S.vx*=0.6; S.vy*=0.6; S.vz*=0.6; }
+  } else { S.stillCount=0; }
+
+  const thr=0.08;
+  S.vx+=(Math.abs(wx)>thr?wx:0)*dt;
+  S.vy+=(Math.abs(wy)>thr?wy:0)*dt;
+  S.vz+=(Math.abs(wz)>thr?wz:0)*dt;
+  S.px+=S.vx*dt; S.py+=S.vy*dt; S.pz+=S.vz*dt;
+
+  const last=S.trail[S.trail.length-1];
+  if (!last||Math.hypot(S.px-last.x,S.py-last.y,S.pz-last.z)>0.04) {
+    const now=Date.now();
+    S.trail.push({x:S.px,y:S.py,z:S.pz,t:now});
+    S.logData.push({t:now,
+      x:S.px.toFixed(3),y:S.py.toFixed(3),z:S.pz.toFixed(3),
+      vx:S.vx.toFixed(3),vy:S.vy.toFixed(3),vz:S.vz.toFixed(3),
+      pitch:(S.pitch*180/Math.PI).toFixed(1),
+      roll:(S.roll*180/Math.PI).toFixed(1),
+      yaw:(S.yaw*180/Math.PI).toFixed(1),
+    });
+    if (S.trail.length>3000) S.trail.shift();
+  }
+}
+
+// ═══════════════════ MAP ═══════════════════
+function drawMap() {
+  const canvas=document.getElementById('map-canvas');
+  const panel=document.getElementById('map-panel');
+  if (!panel.clientWidth) return;
+  canvas.width=panel.clientWidth; canvas.height=panel.clientHeight;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height,cx=W/2,cy2=H/2;
+  const sc=50;
+  const ox=cx-S.px*sc, oy=cy2+S.py*sc;
+
+  ctx.fillStyle='#0a0e14'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='rgba(30,58,82,0.6)'; ctx.lineWidth=0.5;
+  for(let x=ox%sc;x<W;x+=sc){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=oy%sc;y<H;y+=sc){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // Origin
+  ctx.strokeStyle='rgba(0,229,255,0.12)'; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,oy);ctx.lineTo(W,oy);ctx.stroke();
+  ctx.strokeStyle='rgba(0,229,255,0.4)';
+  ctx.beginPath();ctx.arc(ox,oy,5,0,Math.PI*2);ctx.stroke();
+
+  // Trail
+  if (S.trail.length>1) {
+    const zs=S.trail.map(p=>p.z);
+    const zMin=Math.min(...zs),zMax=Math.max(...zs)+0.001;
+    ctx.lineWidth=2;
+    for(let i=1;i<S.trail.length;i++){
+      const p0=S.trail[i-1],p1=S.trail[i];
+      const t=(p1.z-zMin)/(zMax-zMin);
+      const r=Math.round(t*255),g=Math.round((1-t)*229),b=Math.round((1-t)*255);
+      ctx.strokeStyle='rgba('+r+','+g+','+b+',0.9)';
+      ctx.beginPath();ctx.moveTo(ox+p0.x*sc,oy-p0.y*sc);ctx.lineTo(ox+p1.x*sc,oy-p1.y*sc);ctx.stroke();
+    }
+  }
+
+  // Drone
+  const dx=ox+S.px*sc, dy=oy-S.py*sc;
+  ctx.save(); ctx.translate(dx,dy); ctx.rotate(-S.yaw);
+  ctx.shadowColor='#00e5ff'; ctx.shadowBlur=14;
+  ctx.fillStyle='#00e5ff'; ctx.beginPath(); ctx.arc(0,0,5,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#00e5ff'; ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-17);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-4,-13);ctx.lineTo(0,-19);ctx.lineTo(4,-13);ctx.stroke();
+  [[-10,-10],[10,-10],[-10,10],[10,10]].forEach(function(v){
+    ctx.strokeStyle='rgba(0,229,255,0.35)'; ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(v[0],v[1]);ctx.stroke();
+    ctx.beginPath();ctx.arc(v[0],v[1],3,0,Math.PI*2);ctx.stroke();
+  });
+  ctx.restore(); ctx.shadowBlur=0;
+
+  // Alt bar
+  const bH=H*.55,bY=(H-bH)/2;
+  ctx.fillStyle='rgba(15,21,32,0.85)'; ctx.fillRect(W-27,bY,13,bH);
+  ctx.strokeStyle='#1e3a52'; ctx.lineWidth=0.5; ctx.strokeRect(W-27,bY,13,bH);
+  const zNorm=Math.max(0,Math.min(1,(S.pz+3)/6));
+  const fH=zNorm*bH;
+  const gr=ctx.createLinearGradient(0,bY+bH,0,bY);
+  gr.addColorStop(0,'#ff6b35');gr.addColorStop(.5,'#00e5ff');gr.addColorStop(1,'#39ff14');
+  ctx.fillStyle=gr; ctx.fillRect(W-25,bY+bH-fH,9,fH);
+  ctx.fillStyle='#4a6a7a'; ctx.font='7px Share Tech Mono'; ctx.textAlign='center';
+  ctx.fillText('Z',W-20,bY-4);
+  ctx.fillStyle='#c8dde8'; ctx.fillText(S.pz.toFixed(1),W-20,bY+bH+11);
+
+  // Scale bar
+  ctx.strokeStyle='rgba(0,229,255,0.25)'; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(10,H-13);ctx.lineTo(10+sc,H-13);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(10,H-10);ctx.lineTo(10,H-16);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(10+sc,H-10);ctx.lineTo(10+sc,H-16);ctx.stroke();
+  ctx.fillStyle='#4a6a7a'; ctx.font='8px Share Tech Mono'; ctx.textAlign='left';
+  ctx.fillText('1m',10+sc/2-6,H-2);
+}
+
+// ═══════════════════ COMPASS ═══════════════════
+function drawCompass() {
+  const canvas=document.getElementById('compass-canvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=55;
+  ctx.clearRect(0,0,W,H);
+
+  ctx.strokeStyle='#1e3a52'; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+
+  for(let i=0;i<36;i++){
+    const a=i/36*Math.PI*2;
+    const big=i%9===0,med=i%3===0;
+    const len=big?10:med?6:3;
+    ctx.strokeStyle=big?'#00e5ff':'#1e3a52'; ctx.lineWidth=big?1.5:.8;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.sin(a)*r,cy-Math.cos(a)*r);
+    ctx.lineTo(cx+Math.sin(a)*(r-len),cy-Math.cos(a)*(r-len));
+    ctx.stroke();
+  }
+
+  // Yaw in degrees 0-360
+  const yawDeg=((S.yaw*180/Math.PI)%360+360)%360;
+  // Cardinal labels rotate with the compass
+  var cards=[['N',0,'#ff6b35'],['E',90,'#4a6a7a'],['S',180,'#4a6a7a'],['W',270,'#4a6a7a']];
+  ctx.font='8px Orbitron'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  cards.forEach(function(c){
+    const a=(c[1]-yawDeg)*Math.PI/180;
+    ctx.fillStyle=c[2];
+    ctx.fillText(c[0], cx+Math.sin(a)*(r-18), cy-Math.cos(a)*(r-18));
+  });
+
+  // Needle — points North (rotates with yaw)
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(S.yaw);
+  ctx.fillStyle='#ff6b35'; ctx.shadowColor='#ff6b35'; ctx.shadowBlur=8;
+  ctx.beginPath();ctx.moveTo(0,-(r-12));ctx.lineTo(-4,0);ctx.lineTo(4,0);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#1e3a52'; ctx.shadowBlur=0;
+  ctx.beginPath();ctx.moveTo(0,r-12);ctx.lineTo(-4,0);ctx.lineTo(4,0);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#00e5ff'; ctx.shadowColor='#00e5ff'; ctx.shadowBlur=6;
+  ctx.beginPath();ctx.arc(0,0,3,0,Math.PI*2);ctx.fill();
+  ctx.restore(); ctx.shadowBlur=0;
+
+  ctx.fillStyle='#00e5ff'; ctx.font='9px Share Tech Mono';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(yawDeg.toFixed(0)+'°', cx, cy);
+}
+
+// ═══════════════════ ATTITUDE ═══════════════════
+function drawAttitude() {
+  const canvas=document.getElementById('attitude-canvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=55;
+  ctx.clearRect(0,0,W,H);
+
+  ctx.save();
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.clip();
+
+  const pitchPx=S.pitch*(r/(Math.PI/4));
+  ctx.save();
+  ctx.translate(cx,cy); ctx.rotate(S.roll);
+  ctx.fillStyle='#0d3251'; ctx.fillRect(-r*2,-r*2,r*4,r*2+pitchPx);
+  ctx.fillStyle='#3d1a00'; ctx.fillRect(-r*2,pitchPx,r*4,r*2);
+  ctx.strokeStyle='#c8dde8'; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(-r*2,pitchPx);ctx.lineTo(r*2,pitchPx);ctx.stroke();
+  for(var p=-40;p<=40;p+=10){
+    if(!p) continue;
+    const y=pitchPx-p*(r/45);
+    const len=p%20===0?18:9;
+    ctx.strokeStyle='rgba(200,221,232,0.3)'; ctx.lineWidth=.7;
+    ctx.beginPath();ctx.moveTo(-len,y);ctx.lineTo(len,y);ctx.stroke();
+    if(p%20===0){
+      ctx.fillStyle='rgba(200,221,232,0.4)'; ctx.font='6px Share Tech Mono'; ctx.textAlign='right';
+      ctx.fillText(p+'°',-len-2,y+3);
+    }
+  }
+  ctx.restore();
+
+  ctx.strokeStyle='#ffcc00'; ctx.lineWidth=2; ctx.shadowColor='#ffcc00'; ctx.shadowBlur=6;
+  ctx.beginPath();ctx.moveTo(cx-26,cy);ctx.lineTo(cx-10,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx+10,cy);ctx.lineTo(cx+26,cy);ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.stroke();
+  ctx.shadowBlur=0;
+  ctx.restore();
+
+  ctx.strokeStyle='#1e3a52'; ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+
+  for(var a=-60;a<=60;a+=10){
+    const rad=(a-90)*Math.PI/180;
+    const len=a%30===0?8:4;
+    ctx.strokeStyle='rgba(0,229,255,0.3)'; ctx.lineWidth=.7;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(rad)*r,cy+Math.sin(rad)*r);
+    ctx.lineTo(cx+Math.cos(rad)*(r-len),cy+Math.sin(rad)*(r-len));
+    ctx.stroke();
+  }
+  const rp=(S.roll-Math.PI/2);
+  ctx.fillStyle='#ffcc00';
+  ctx.save();ctx.translate(cx+Math.cos(rp)*r,cy+Math.sin(rp)*r);ctx.rotate(rp+Math.PI/2);
+  ctx.beginPath();ctx.moveTo(0,-5);ctx.lineTo(-3,0);ctx.lineTo(3,0);ctx.closePath();ctx.fill();
+  ctx.restore();
+}
+
+// ═══════════════════ UI ═══════════════════
+function updateUI() {
+  function f(n){ return n.toFixed(2); }
+  function f1(n){ return n.toFixed(1); }
+  document.getElementById('px').innerHTML=f(S.px)+' <small>m X</small>';
+  document.getElementById('py').innerHTML=f(S.py)+' <small>m Y</small>';
+  document.getElementById('pz').innerHTML=f(S.pz)+' <small>m Z</small>';
+  const spd=Math.sqrt(S.vx*S.vx+S.vy*S.vy+S.vz*S.vz);
+  document.getElementById('spd').innerHTML=f(spd)+' <small>m/s</small>';
+  document.getElementById('vx').textContent=' '+f(S.vx);
+  document.getElementById('vy').textContent=' '+f(S.vy);
+  document.getElementById('vz').textContent=' '+f(S.vz);
+  const yd=((S.yaw*180/Math.PI)%360+360)%360;
+  document.getElementById('hdg').textContent=yd.toFixed(0)+'° '+dirLabel(yd);
+  document.getElementById('pitch').textContent=' '+f1(S.pitch*180/Math.PI)+'°';
+  document.getElementById('roll').textContent=' '+f1(S.roll*180/Math.PI)+'°';
+  document.getElementById('arx').textContent=' '+f(S.ax);
+  document.getElementById('ary').textContent=' '+f(S.ay);
+  document.getElementById('arz').textContent=' '+f(S.az);
+  document.getElementById('lpts').textContent=S.trail.length;
+  document.getElementById('lc').textContent=S.logData.length+' pts';
+  document.getElementById('d-track').classList.toggle('ok',S.tracking);
+}
+
+function dirLabel(d){
+  return ['N','NE','E','SE','S','SW','W','NW'][Math.round(d/45)%8];
+}
+
+// ═══════════════════ CONTROLS ═══════════════════
+function toggleTracking(){
+  S.tracking=!S.tracking;
+  const btn=document.getElementById('btn-start');
+  if(S.tracking){btn.textContent='■ STOP';btn.classList.remove('p');btn.classList.add('active');}
+  else{btn.textContent='▶ START';btn.classList.add('p');btn.classList.remove('active');}
+  showToast(S.tracking?'TRACKING ON':'TRACKING OFF');
+}
+
+function resetNav(){
+  S.px=S.py=S.pz=S.vx=S.vy=S.vz=0;
+  S.trail=[];S.logData=[];S.stillCount=0;
+  S.tracking=false;
+  const btn=document.getElementById('btn-start');
+  btn.textContent='▶ START';btn.classList.add('p');btn.classList.remove('active');
+  showToast('RESET OK');
+}
+
+function calibrate(){
+  showToast('CAL — tieni fermo 3 secondi');
+  const samp=[];
+  const id=setInterval(function(){samp.push({x:S.lax,y:S.lay,z:S.laz});},50);
+  setTimeout(function(){
+    clearInterval(id);
+    if(samp.length){
+      S.bx=samp.reduce(function(a,v){return a+v.x;},0)/samp.length;
+      S.by=samp.reduce(function(a,v){return a+v.y;},0)/samp.length;
+      S.bz=samp.reduce(function(a,v){return a+v.z;},0)/samp.length;
+    }
+    showToast('CAL OK bias:('+S.bx.toFixed(2)+','+S.by.toFixed(2)+','+S.bz.toFixed(2)+')');
+  },3000);
+}
+
+function exportLog(){
+  if(!S.logData.length){showToast('NESSUN DATO');return;}
+  const hdr='time_ms,x_m,y_m,z_m,vx,vy,vz,pitch_deg,roll_deg,yaw_deg\n';
+  const rows=S.logData.map(function(r){
+    return r.t+','+r.x+','+r.y+','+r.z+','+r.vx+','+r.vy+','+r.vz+','+r.pitch+','+r.roll+','+r.yaw;
+  }).join('\n');
+  const blob=new Blob([hdr+rows],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='ins_log_'+Date.now()+'.csv';
+  a.click();
+  showToast('ESPORTATI '+S.logData.length+' PUNTI');
+}
+
+var _tt;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},2500);
+}
+</script>
+</body>
+</html>
