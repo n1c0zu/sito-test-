@@ -1,361 +1,908 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PepperStats Pro Premium - Advanced chili Agronomy</title>
-    <style>
-        /* =========================================
-           STILE "RICH FRUTIGER AERO"
-           ========================================= */
-        body {
-            margin: 0; padding: 0; min-height: 100vh;
-            font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, sans-serif;
-            /* Sfondo Frutiger ricco con acqua e forme vetrose complesse */
-            background: radial-gradient(circle at 50% 0%, #74ebd5 0%, #9face6 50%, #2af598 100%),
-                        url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wOCI+PHBhdGggZD0iTTAgMGgxMDAwdjEwMDBIMHoiLz48Y2lyY2xlIGN4PSIyNTAiIGN5PSIyNTAiIHI9IjIwMCIvPjxjaXJjbGUgY3g9Ijc1MCIgY3k9Ijc1MCIgcj0iMjAwIi8+PHBhdGggZD0iTTAgNTAwczUwLTMwIDc1IDAgNzUtMTAwIDEwMHM1MC0zMCA3NSA1MHMyMC0xMDAgNTAtMTAwczI1IDIwIDUwIDEwczcwLTMwIDc1IDUwczYwLTgwIDEwMC04MGg0MCIvPjwvZz48L3N2Zz4=');
-            background-size: cover, 150px 150px;
-            color: #013a63;
-            display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PepperStats Pro</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        h1 {
-            color: #ffffff; text-shadow: 0px 3px 6px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.5);
-            font-size: 3em; margin-bottom: 20px; letter-spacing: -1.5px; text-align: center;
-        }
+  :root {
+    --bg: #0d1a12;
+    --bg2: #122019;
+    --bg3: #1a2e22;
+    --card: rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.1);
+    --green: #3ddc84;
+    --green2: #1a8a4a;
+    --orange: #ff7043;
+    --blue: #4fc3f7;
+    --yellow: #ffd54f;
+    --red: #ef5350;
+    --text: #e8f5e9;
+    --text2: #a5d6a7;
+    --text3: #66bb6a;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif;
+  }
 
-        .glass-panel {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.5) 100%);
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            border-radius: 25px;
-            box-shadow: 0 20px 45px rgba(0, 50, 100, 0.15), inset 0 2px 10px rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(18px);
-            padding: 30px;
-            width: 100%; max-width: 800px; margin-bottom: 30px; position: relative;
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
 
-        .glass-panel::after {
-            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: rotate(30deg); pointer-events: none;
-        }
+  /* HERO HEADER */
+  .hero {
+    background: linear-gradient(135deg, #0a2e1a 0%, #0d3320 40%, #1a4a2a 100%);
+    border-bottom: 1px solid rgba(61,220,132,0.15);
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse, rgba(61,220,132,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
 
-        .controls { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 5px; position: relative; z-index: 5; }
+  .logo {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-size: 28px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.5px; margin-bottom: 6px;
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--green), var(--green2));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .tagline { color: var(--text2); font-size: 13px; letter-spacing: 0.5px; }
 
-        .search-wrapper { position: relative; display: inline-block; width: 300px; }
-        
-        input[type="text"] {
-            padding: 15px 25px; border-radius: 35px; border: 1px solid #a2d2ff;
-            background: rgba(255, 255, 255, 0.95); box-shadow: inset 0 3px 7px rgba(0,0,0,0.1);
-            width: 100%; box-sizing: border-box; outline: none; font-family: inherit; font-size: 16px;
-        }
+  /* SEARCH PANEL */
+  .search-panel {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--card-border);
+    padding: 20px 24px;
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  }
 
-        .suggestions-box {
-            position: absolute; top: calc(100% + 5px); left: 0; width: 100%;
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px);
-            border: 1px solid #a2d2ff; border-radius: 18px;
-            box-shadow: 0 15px 30px rgba(0, 50, 100, 0.25); overflow: hidden;
-            z-index: 100; display: none; text-align: left; max-height: 250px; overflow-y: auto;
-        }
-        .suggestion-item {
-            padding: 12px 18px; cursor: pointer; border-bottom: 1px solid rgba(0, 119, 182, 0.1);
-            font-size: 0.95em; font-weight: bold; transition: 0.2s;
-        }
-        .suggestion-item:last-child { border-bottom: none; }
-        .suggestion-item:hover { background: linear-gradient(to right, #4facfe, #0088ff); color: white; }
+  .search-wrap { position: relative; width: 300px; }
 
-        .glossy-btn {
-            background: linear-gradient(to bottom, #4facfe 0%, #0088ff 100%);
-            border: 2px solid #fff; border-radius: 35px; color: white;
-            padding: 15px 28px; font-weight: bold; font-family: inherit; font-size: 16px;
-            cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            box-shadow: 0 5px 20px rgba(0, 136, 255, 0.35), inset 0 3px 6px rgba(255,255,255,0.5);
-            transition: all 0.2s ease-in-out;
-        }
-        .glossy-btn:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.1); }
-        .btn-gps { background: linear-gradient(to bottom, #43e97b 0%, #38f9d7 100%); color: #005f56; text-shadow: none; box-shadow: 0 5px 20px rgba(56, 249, 215, 0.35); }
+  .search-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid rgba(61,220,132,0.25);
+    border-radius: 30px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    padding: 12px 20px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--green); }
+  .search-input::placeholder { color: var(--text3); }
 
-        .temp-main { font-size: 5em; color: #ff5722; font-weight: 800; margin: 15px 0; text-shadow: 3px 3px 0px #fff; }
+  .suggestions {
+    position: absolute; top: calc(100% + 6px); left: 0; width: 100%;
+    background: #1e3528; border: 1px solid rgba(61,220,132,0.3);
+    border-radius: var(--radius-sm); overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    z-index: 100; display: none;
+  }
+  .suggestion-item {
+    padding: 11px 16px; cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px; font-weight: 600;
+    transition: background 0.15s;
+  }
+  .suggestion-item:last-child { border-bottom: none; }
+  .suggestion-item:hover { background: rgba(61,220,132,0.15); color: var(--green); }
+  .suggestion-sub { font-size: 11px; font-weight: 400; color: var(--text2); margin-top: 2px; }
 
-        h3 { color: #013a63; border-bottom: 3px solid rgba(255,255,255,0.6); padding-bottom: 10px; margin-top: 35px; text-transform: uppercase; letter-spacing: 1px; }
+  .btn {
+    padding: 12px 22px; border-radius: 30px; border: 1px solid rgba(61,220,132,0.3);
+    background: rgba(61,220,132,0.1); color: var(--green);
+    font-family: var(--font); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .btn:hover { background: rgba(61,220,132,0.2); border-color: var(--green); }
+  .btn-loc { background: rgba(79,195,247,0.1); color: var(--blue); border-color: rgba(79,195,247,0.3); }
+  .btn-loc:hover { background: rgba(79,195,247,0.2); border-color: var(--blue); }
 
-        /* Griglie Dati Migliorate */
-        .details-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 25px;
-        }
-        .detail-item {
-            background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 18px;
-            border: 2px solid rgba(255,255,255,0.8); font-size: 1em; font-weight: bold;
-            display: flex; flex-direction: column; gap: 5px;
-        }
-        .detail-item .label { display: flex; align-items: center; gap: 8px; font-size: 0.9em; opacity: 0.8;}
-        .detail-item .value { float: right; color: #0077b6; font-size: 1.2em;}
+  /* MAIN CONTENT */
+  .main { max-width: 900px; margin: 0 auto; padding: 28px 20px 60px; }
 
-        /* Icone SVG professionali inline */
-        .icon { width: 1.5em; height: 1.5em; fill: #0077b6;}
+  /* LOADING */
+  .loading-overlay {
+    display: none; text-align: center; padding: 60px 20px;
+  }
+  .loader {
+    width: 44px; height: 44px;
+    border: 3px solid rgba(61,220,132,0.2);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--text2); font-size: 14px; }
 
-        /* Container Previsioni Orarie */
-        .hourly-container {
-            display: flex; overflow-x: auto; gap: 15px; padding: 15px 5px; scrollbar-width: thin;
-        }
-        .hourly-card {
-            min-width: 95px; background: rgba(255,255,255,0.65); border-radius: 20px;
-            padding: 15px 12px; border: 2px solid #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.08);
-            text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;
-        }
-        .h-time { font-weight: bold; color: #013a63; font-size: 1em; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 5px; width: 100%;}
-        .h-icon { font-size: 2.2em; }
-        .h-temp { color: #ff5722; font-size: 1.3em; font-weight: bold; }
-        .h-wind { font-size: 0.85em; color: #005f56; background: rgba(255,255,255,0.6); padding: 3px 8px; border-radius: 12px; font-weight: bold;}
+  /* WEATHER CARD */
+  .weather-card { display: none; }
 
-        /* Container Previsioni Giornaliere Avanzato */
-        .daily-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-        .daily-row {
-            display: grid; grid-template-columns: 90px 40px 100px 120px 1fr; align-items: center; gap: 10px;
-            background: rgba(255,255,255,0.6); padding: 15px 25px; border-radius: 15px;
-            border: 2px solid rgba(255,255,255,0.8); font-weight: bold;
-        }
-        .d-day { color: #013a63; }
-        .d-icon { font-size: 1.8em; text-align: center; }
-        .d-rain { color: #0088ff; font-size: 1em; text-align: center; }
-        .d-temp { color: #ff5722; text-align: center; font-size: 1.1em; }
-        .d-temp span { color: #005f56; font-size: 0.95em; font-weight: normal; margin-left: 5px; }
-        .d-et0 { font-size: 0.9em; text-align: right; color: #0077b6; }
+  /* TOP ROW */
+  .top-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 16px;
+  }
+  .location-info h2 { font-size: 22px; font-weight: 700; color: var(--text); }
+  .location-info .coords { font-size: 12px; color: var(--text3); margin-top: 4px; }
+  .current-temp {
+    font-size: 64px; font-weight: 800; color: var(--orange);
+    line-height: 1; letter-spacing: -3px;
+  }
+  .temp-unit { font-size: 28px; font-weight: 400; color: var(--text2); }
 
-        /* Pannello Legenda Agronomica */
-        .legend-box {
-            margin-top: 30px; padding: 25px; border-radius: 20px; text-align: left;
-            background: rgba(0, 119, 182, 0.05); border: 2px dashed rgba(0, 119, 182, 0.3); font-size: 0.95em;
-        }
-        .legend-section { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(0, 119, 182, 0.1); }
-        .legend-title { font-weight: bold; color: #0077b6; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;}
+  /* STAT GRID */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px; margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .stat-card.temp::before { background: var(--orange); }
+  .stat-card.water::before { background: var(--blue); }
+  .stat-card.wind::before { background: var(--text3); }
+  .stat-card.soil::before { background: #a1887f; }
+  .stat-card.sun::before { background: var(--yellow); }
+  .stat-card.et::before { background: #80cbc4; }
 
-        /* Box Consigli */
-        .advice-box {
-            margin-top: 35px; padding: 25px; border-radius: 20px; text-align: left;
-            background: rgba(255,255,255,0.9); border: 2px solid #fff; font-size: 1em;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.9), 0 8px 20px rgba(0,0,0,0.06);
-        }
-        .advice-section { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(0, 119, 182, 0.2); }
-        .advice-section:last-child { border-bottom: none; }
-        .advice-title { color: #013a63; font-weight: bold; font-size: 1.2em; display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
-        .concimazione-spray-icon { width: 1.5em; height: 1.5em; fill: #56ab2f; }
+  .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .stat-value { font-size: 22px; font-weight: 700; color: var(--text); }
+  .stat-unit { font-size: 12px; color: var(--text2); font-weight: 400; margin-left: 3px; }
+  .stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
 
-        #loading { display: none; font-weight: bold; color: white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); margin-top: 15px; font-size: 1.1em;}
-    </style>
+  /* WEATHER CODE BADGE */
+  .weather-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(61,220,132,0.1); border: 1px solid rgba(61,220,132,0.2);
+    border-radius: 30px; padding: 6px 14px;
+    font-size: 13px; color: var(--green);
+    margin-bottom: 20px;
+  }
+  .weather-icon { font-size: 18px; }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-size: 13px; font-weight: 600; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 28px 0 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--card-border);
+  }
+
+  /* HOURLY */
+  .hourly-scroll {
+    display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px;
+    scrollbar-width: thin; scrollbar-color: var(--green2) transparent;
+  }
+  .hourly-scroll::-webkit-scrollbar { height: 4px; }
+  .hourly-scroll::-webkit-scrollbar-thumb { background: var(--green2); border-radius: 4px; }
+
+  .hourly-card {
+    min-width: 80px;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm); padding: 12px 8px;
+    text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px;
+    flex-shrink: 0; transition: border-color 0.2s;
+  }
+  .hourly-card.now { border-color: rgba(61,220,132,0.5); background: rgba(61,220,132,0.07); }
+  .h-time { font-size: 11px; color: var(--text3); font-weight: 600; }
+  .h-icon { font-size: 20px; line-height: 1; }
+  .h-temp { font-size: 15px; font-weight: 700; color: var(--orange); }
+  .h-rain { font-size: 10px; color: var(--blue); background: rgba(79,195,247,0.1); padding: 2px 6px; border-radius: 8px; }
+  .h-wind-bar {
+    width: 60px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
+  }
+  .h-wind-fill { height: 100%; background: var(--green); border-radius: 2px; }
+
+  /* DAILY */
+  .daily-list { display: flex; flex-direction: column; gap: 8px; }
+  .daily-row {
+    display: grid; grid-template-columns: 70px 36px 1fr 80px 100px;
+    align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    font-size: 14px;
+  }
+  .d-day { font-weight: 600; color: var(--text); }
+  .d-icon { font-size: 18px; text-align: center; }
+  .d-bar-wrap {
+    height: 6px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden;
+  }
+  .d-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(to right, var(--blue), var(--orange)); }
+  .d-rain { font-size: 12px; color: var(--blue); text-align: center; }
+  .d-temp { text-align: right; font-weight: 700; color: var(--orange); }
+  .d-temp span { color: var(--text3); font-weight: 400; margin-left: 6px; font-size: 12px; }
+
+  /* AGRO ANALYSIS */
+  .agro-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px; margin-bottom: 28px;
+  }
+  .agro-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 18px;
+  }
+  .agro-card-title {
+    font-size: 12px; font-weight: 600; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+  }
+  .agro-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .agro-icon.orange { background: rgba(255,112,67,0.15); }
+  .agro-icon.blue { background: rgba(79,195,247,0.15); }
+  .agro-icon.green { background: rgba(61,220,132,0.15); }
+  .agro-icon.yellow { background: rgba(255,213,79,0.15); }
+  .agro-icon.red { background: rgba(239,83,80,0.15); }
+
+  .risk-indicator {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .risk-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .risk-dot.ok { background: var(--green); }
+  .risk-dot.warn { background: var(--yellow); }
+  .risk-dot.danger { background: var(--red); }
+  .risk-label { font-size: 14px; font-weight: 600; color: var(--text); }
+  .risk-desc { font-size: 12px; color: var(--text2); line-height: 1.5; margin-top: 4px; }
+
+  /* GAUGE */
+  .gauge-wrap { position: relative; width: 100px; height: 56px; overflow: hidden; margin: 0 auto 8px; }
+  .gauge-bg, .gauge-fill, .gauge-overlay { position: absolute; bottom: 0; left: 0; width: 100px; height: 100px; border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+  .gauge-bg { background: rgba(255,255,255,0.08); }
+  .gauge-fill { background: conic-gradient(var(--green) 0deg, transparent 0deg); transform-origin: 50% 100%; }
+  .gauge-overlay { background: var(--bg2); width: 70px; height: 35px; bottom: 0; left: 15px; border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+  .gauge-val { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); font-size: 16px; font-weight: 700; color: var(--text); }
+
+  /* STRESS INDEX BAR */
+  .stress-bar-wrap { margin: 8px 0; }
+  .stress-bar-track { height: 8px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; margin-bottom: 4px; }
+  .stress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+  .stress-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); }
+
+  /* COLD WINDOWS */
+  .cold-timeline { position: relative; margin: 10px 0; }
+  .timeline-track { height: 16px; background: rgba(255,255,255,0.07); border-radius: 8px; overflow: hidden; position: relative; }
+  .timeline-safe { position: absolute; top: 0; height: 100%; background: rgba(61,220,132,0.3); }
+  .timeline-cold { position: absolute; top: 0; height: 100%; background: rgba(79,195,247,0.5); border-radius: 0; }
+  .timeline-freeze { position: absolute; top: 0; height: 100%; background: rgba(239,83,80,0.6); }
+  .timeline-legend { display: flex; gap: 12px; margin-top: 6px; font-size: 10px; color: var(--text3); }
+  .timeline-legend-item { display: flex; align-items: center; gap: 4px; }
+  .tl-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  /* IRRIGATION TABLE */
+  .irr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .irr-table td { padding: 8px 10px; border-bottom: 1px solid var(--card-border); color: var(--text2); }
+  .irr-table td:last-child { text-align: right; font-weight: 600; color: var(--text); }
+  .irr-table tr:last-child td { border-bottom: none; }
+
+  /* ALERT BANNERS */
+  .alert {
+    border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 10px;
+    font-size: 13px; line-height: 1.5; display: flex; gap: 10px; align-items: flex-start;
+    border-left: 3px solid;
+  }
+  .alert.danger { background: rgba(239,83,80,0.08); border-color: var(--red); color: #ffcdd2; }
+  .alert.warn { background: rgba(255,213,79,0.08); border-color: var(--yellow); color: #fff9c4; }
+  .alert.ok { background: rgba(61,220,132,0.08); border-color: var(--green); color: #c8e6c9; }
+  .alert.info { background: rgba(79,195,247,0.08); border-color: var(--blue); color: #b3e5fc; }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* GDD WIDGET */
+  .gdd-display { text-align: center; padding: 8px 0; }
+  .gdd-big { font-size: 36px; font-weight: 800; color: var(--green); line-height: 1; }
+  .gdd-label { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .gdd-phases { display: flex; gap: 6px; margin-top: 10px; }
+  .gdd-phase {
+    flex: 1; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 6px 4px;
+    text-align: center; font-size: 10px; color: var(--text3); border: 1px solid var(--card-border);
+  }
+  .gdd-phase.active { background: rgba(61,220,132,0.12); border-color: rgba(61,220,132,0.3); color: var(--green); }
+  .gdd-phase-name { font-weight: 600; margin-bottom: 2px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .daily-row { grid-template-columns: 55px 28px 1fr 60px; }
+    .d-bar-wrap, .d-rain { display: none; }
+    .current-temp { font-size: 48px; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .agro-grid { grid-template-columns: 1fr; }
+    .search-wrap { width: 100%; }
+  }
+</style>
 </head>
 <body>
 
-    <h1>🌶️ PepperStats Pro Premium</h1>
-    
-    <div class="glass-panel">
-        <div class="controls">
-            <div class="search-wrapper">
-                <input type="text" id="cityInput" placeholder="Ricerca stazione meteo locale..." autocomplete="off">
-                <div id="suggestionsBox" class="suggestions-box"></div>
-            </div>
-            <button class="glossy-btn btn-gps" onclick="useGPS()">📍 GPS Locali</button>
-        </div>
-        <div id="loading">Sincronizzazione telemetria agronomica...⏳</div>
+<div class="hero">
+  <div class="logo">
+    <div class="logo-icon">🌶️</div>
+    PepperStats Pro
+  </div>
+  <div class="tagline">Agronomy Intelligence Platform · Capsicum Specialist</div>
+</div>
+
+<div class="search-panel">
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="cityInput" placeholder="Cerca una città..." autocomplete="off">
+    <div id="suggestionsBox" class="suggestions"></div>
+  </div>
+  <button class="btn btn-loc" onclick="useGPS()">📍 Rileva posizione</button>
+</div>
+
+<div class="main">
+  <div class="loading-overlay" id="loading">
+    <div class="loader"></div>
+    <div class="loading-text">Acquisizione dati meteorologici...</div>
+  </div>
+
+  <div class="weather-card" id="weatherCard">
+    <!-- TOP -->
+    <div class="top-row">
+      <div class="location-info">
+        <h2 id="locationName">—</h2>
+        <div class="coords" id="coordsDisplay"></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="current-temp" id="tempDisplay">—<span class="temp-unit">°C</span></div>
+        <div id="feelsLike" style="font-size:12px; color:var(--text3); margin-top:4px;"></div>
+      </div>
     </div>
 
-    <div class="glass-panel" id="weatherCard" style="display: none;">
-        <h2 id="locationName" style="margin:0; color: #013a63;">Località</h2>
-        <p class="temp-main" id="tempDisplay">--°C</p>
-        
-        <div class="details-grid">
-            <div class="detail-item">
-                <div class="label">🌡️ Range Temp</div>
-                <div class="value" id="tempRange">--</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">💧 Umidità Relativa</div>
-                <div class="value"><span id="humidity">--</span>%</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">💨 Vento (Raffica)</div>
-                <div class="value"><span id="windDisplay">--</span> km/h</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">🌧️ Pioggia Oggi</div>
-                <div class="value"><span id="rainDisplay">--</span> mm</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">🟤 Temp. Suolo (-6cm)</div>
-                <div class="value"><span id="soilTemp">--</span>°C</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">𚔰 Evapotraspirazione</div>
-                <div class="value"><span id="et0">--</span> mm</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">☀️ Indice UV</div>
-                <div class="value" id="uvIndex">--</div>
-            </div>
-            <div class="detail-item">
-                <div class="label">☁️ Copertura Nuvole</div>
-                <div class="value"><span id="clouds">--</span>%</div>
-            </div>
-        </div>
-
-        <h3>⏱️ Telemetria Prossime 24 Ore</h3>
-        <div class="hourly-container" id="hourlyForecast"></div>
-
-        <h3>📅 Piano Agronomico 7 Giorni</h3>
-        <div class="daily-container" id="dailyForecast"></div>
-
-        <div class="legend-box">
-            <div class="legend-section">
-                <div class="legend-title">🌡️ Temperatura</div>
-                <p style="margin:0;">Intervallo critico: 12°C - 34°C. Blocca il metabolismo e la fioritura fuori da questo range.</p>
-            </div>
-            <div class="legend-section">
-                <div class="legend-title">💧 Irrigazione e Evapotraspirazione</div>
-                <p style="margin:0;">ET0 indica quanta acqua la pianta perde. Se pioggia < ET0, irrigare per coprire la differenza.</p>
-            </div>
-            <div class="legend-section">
-                <div class="legend-title">Concimazione Fogliare (Spray)</div>
-                <p style="margin:0;">Eseguire solo se temperatura < 25°C e radiazione solare bassa (nuvolosità > 80%).</p>
-            </div>
-        </div>
-        
-        <div id="adviceDisplay" class="advice-box"></div>
+    <div class="weather-badge">
+      <span class="weather-icon" id="currentIcon">—</span>
+      <span id="weatherDesc">—</span>
     </div>
 
-    <script>
-        const loadingDiv = document.getElementById('loading');
-        const weatherCard = document.getElementById('weatherCard');
-        const cityInput = document.getElementById('cityInput');
-        const suggestionsBox = document.getElementById('suggestionsBox');
-        let debounceTimer;
+    <!-- STAT GRID -->
+    <div class="stat-grid">
+      <div class="stat-card temp">
+        <div class="stat-label">Range giornaliero</div>
+        <div class="stat-value" id="tempRange">—</div>
+        <div class="stat-sub" id="tempRangeSub"></div>
+      </div>
+      <div class="stat-card water">
+        <div class="stat-label">Umidità relativa</div>
+        <div class="stat-value" id="humidity">—<span class="stat-unit">%</span></div>
+        <div class="stat-sub" id="humiditySub"></div>
+      </div>
+      <div class="stat-card wind">
+        <div class="stat-label">Vento attuale</div>
+        <div class="stat-value" id="windDisplay">—<span class="stat-unit">km/h</span></div>
+        <div class="stat-sub" id="windSub"></div>
+      </div>
+      <div class="stat-card water">
+        <div class="stat-label">Precipitazioni</div>
+        <div class="stat-value" id="rainDisplay">—<span class="stat-unit">mm</span></div>
+        <div class="stat-sub" id="rainSub"></div>
+      </div>
+      <div class="stat-card soil">
+        <div class="stat-label">Temp. suolo 6cm</div>
+        <div class="stat-value" id="soilTemp">—<span class="stat-unit">°C</span></div>
+        <div class="stat-sub" id="soilSub"></div>
+      </div>
+      <div class="stat-card et">
+        <div class="stat-label">Evapotraspirazione</div>
+        <div class="stat-value" id="et0">—<span class="stat-unit">mm</span></div>
+        <div class="stat-sub">ET₀ FAO-56 oggi</div>
+      </div>
+      <div class="stat-card sun">
+        <div class="stat-label">Indice UV</div>
+        <div class="stat-value" id="uvIndex">—</div>
+        <div class="stat-sub" id="uvSub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Copertura nuvolosa</div>
+        <div class="stat-value" id="clouds">—<span class="stat-unit">%</span></div>
+        <div class="stat-sub" id="cloudSub"></div>
+      </div>
+    </div>
 
-        // Funzione per interpretare i codici meteo (con icone vettoriali rimosse)
-        function getWeatherIcon(code, isDay = 1) {
-            // Qui andrebbero inserite le icone vettoriali, per ora mostriamo solo testo
-            return "☁️"; 
-        }
+    <!-- HOURLY -->
+    <div class="section-title">Telemetria 24 ore</div>
+    <div class="hourly-scroll" id="hourlyForecast"></div>
 
-        cityInput.addEventListener('input', (e) => {
-            clearTimeout(debounceTimer);
-            const query = e.target.value.trim();
-            if (query.length < 2) { suggestionsBox.style.display = 'none'; return; }
+    <!-- DAILY -->
+    <div class="section-title">Previsione 7 giorni</div>
+    <div class="daily-list" id="dailyForecast"></div>
 
-            debounceTimer = setTimeout(async () => {
-                try {
-                    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=5&language=it&format=json`);
-                    const data = await res.json();
-                    if (data.results) {
-                        suggestionsBox.innerHTML = '';
-                        data.results.forEach(city => {
-                            const div = document.createElement('div');
-                            div.className = 'suggestion-item';
-                            div.innerHTML = `${city.name} <br><span style="font-size:0.8em; font-weight:normal;">${city.admin1 || ''}, ${city.country || ''}</span>`;
-                            div.onclick = () => {
-                                cityInput.value = city.name;
-                                suggestionsBox.style.display = 'none';
-                                fetchWeather(city.latitude, city.longitude, city.name);
-                            };
-                            suggestionsBox.appendChild(div);
-                        });
-                        suggestionsBox.style.display = 'block';
-                    }
-                } catch (err) {}
-            }, 300);
-        });
+    <!-- AGRO ANALYSIS -->
+    <div class="section-title">Analisi agronomica avanzata</div>
+    <div class="agro-grid" id="agroGrid"></div>
 
-        function useGPS() {
-            if (navigator.geolocation) {
-                loadingDiv.style.display = 'block'; weatherCard.style.display = 'none';
-                cityInput.value = '';
-                navigator.geolocation.getCurrentPosition(
-                    (p) => fetchWeather(p.coords.latitude, p.coords.longitude, "Coordinate Locali"),
-                    () => { alert("GPS non disponibile."); loadingDiv.style.display = 'none'; }
-                );
-            }
-        }
+    <!-- ALERTS -->
+    <div class="section-title">Report operativo</div>
+    <div id="alertsDisplay"></div>
 
-        async function fetchWeather(lat, lon, locName) {
-            loadingDiv.style.display = 'block'; weatherCard.style.display = 'none';
-            try {
-                // Aggiunto weathercode, is_day e forecast_days=7
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,cloud_cover,weathercode,is_day&hourly=temperature_2m,precipitation_probability,wind_speed_10m,soil_temperature_6cm,weathercode,is_day&daily=temperature_2m_max,temperature_2m_min,uv_index_max,et0_fao_evapotranspiration,weathercode,precipitation_sum&timezone=auto&forecast_days=7`;
-                const res = await fetch(url);
-                const data = await res.json();
-                updateUI(locName, data);
-            } catch (e) { alert("Errore di connessione API."); } finally { loadingDiv.style.display = 'none'; }
-        }
+  </div>
+</div>
 
-        function updateUI(locName, data) {
-            const current = data.current;
-            const daily = data.daily;
-            
-            // Trova l'indice orario corretto corrispondente all'ora attuale
-            const now = new Date();
-            let currentIndex = data.hourly.time.findIndex(t => new Date(t) >= now);
-            if (currentIndex === -1) currentIndex = 0;
+<script>
+const loadingEl = document.getElementById('loading');
+const weatherCard = document.getElementById('weatherCard');
+const cityInput = document.getElementById('cityInput');
+const suggestionsBox = document.getElementById('suggestionsBox');
+let debounceTimer;
+let lastLat, lastLon;
 
-            document.getElementById('locationName').innerText = locName;
-            document.getElementById('tempDisplay').innerText = current.temperature_2m + "°";
-            document.getElementById('tempRange').innerText = daily.temperature_2m_max[0] + "° / " + daily.temperature_2m_min[0] + "°";
-            document.getElementById('humidity').innerText = current.relative_humidity_2m;
-            document.getElementById('windDisplay').innerText = current.wind_speed_10m;
-            document.getElementById('rainDisplay').innerText = current.precipitation;
-            document.getElementById('soilTemp').innerText = data.hourly.soil_temperature_6cm[currentIndex];
-            document.getElementById('et0').innerText = daily.et0_fao_evapotranspiration[0];
-            document.getElementById('uvIndex').innerText = daily.uv_index_max[0];
-            document.getElementById('clouds').innerText = current.cloud_cover;
+// =====================
+// WEATHER CODE HELPERS
+// =====================
+function getWeatherIcon(code, isDay = 1) {
+  if (code === 0) return isDay ? '☀️' : '🌙';
+  if (code <= 2) return isDay ? '⛅' : '🌤️';
+  if (code === 3) return '☁️';
+  if (code <= 49) return '🌫️';
+  if (code <= 57) return '🌦️';
+  if (code <= 67) return '🌧️';
+  if (code <= 77) return '❄️';
+  if (code <= 82) return '🌦️';
+  if (code <= 86) return '🌨️';
+  if (code <= 99) return '⛈️';
+  return '☁️';
+}
 
-            // --- RENDER 24 ORE ---
-            const hourlyContainer = document.getElementById('hourlyForecast');
-            hourlyContainer.innerHTML = ''; 
-            for (let i = currentIndex; i < currentIndex + 24; i += 2) {
-                const timeStr = new Date(data.hourly.time[i]).getHours().toString().padStart(2, '0') + ":00";
-                hourlyContainer.innerHTML += `
-                    <div class="hourly-card">
-                        <div class="h-time">${timeStr}</div>
-                        <div class="h-icon">☁️</div>
-                        <div class="h-temp">${data.hourly.temperature_2m[i]}°</div>
-                        <div class="h-wind">💨 ${data.hourly.wind_speed_10m[i]}</div>
-                    </div>`;
-            }
+function getWeatherDesc(code) {
+  if (code === 0) return 'Cielo sereno';
+  if (code <= 2) return 'Parzialmente nuvoloso';
+  if (code === 3) return 'Coperto';
+  if (code <= 49) return 'Nebbia';
+  if (code <= 57) return 'Pioggerella';
+  if (code <= 67) return 'Pioggia';
+  if (code <= 77) return 'Neve';
+  if (code <= 82) return 'Rovesci';
+  if (code <= 86) return 'Rovesci di neve';
+  if (code <= 99) return 'Temporale';
+  return 'Variabile';
+}
 
-            // --- RENDER 7 GIORNI ---
-            const dailyContainer = document.getElementById('dailyForecast');
-            dailyContainer.innerHTML = '';
-            for (let i = 0; i < 7; i++) {
-                dailyContainer.innerHTML += `
-                    <div class="daily-row">
-                        <div class="d-day">Giorno</div>
-                        <div class="d-icon">☁️</div>
-                        <div class="d-rain">0mm</div>
-                        <div class="d-temp">${daily.temperature_2m_max[i]}° <span>${daily.temperature_2m_min[i]}°</span></div>
-                        <div class="d-et0">💧 ${daily.et0_fao_evapotranspiration[i]}mm</div>
-                    </div>`;
-            }
+function getDayName(dateStr, isToday) {
+  if (isToday) return 'Oggi';
+  const d = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+  return d[new Date(dateStr + 'T12:00:00').getDay()];
+}
 
-            // =========================================
-            // MOTORE LOGICO SPOSTAMENTI
-            // =========================================
-            const adviceBox = document.getElementById('adviceDisplay');
-            let reportHTML = "";
+// =====================
+// SEARCH AUTOCOMPLETE
+// =====================
+cityInput.addEventListener('input', e => {
+  clearTimeout(debounceTimer);
+  const q = e.target.value.trim();
+  if (q.length < 2) { suggestionsBox.style.display = 'none'; return; }
+  debounceTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=it&format=json`);
+      const d = await r.json();
+      if (!d.results) { suggestionsBox.style.display = 'none'; return; }
+      suggestionsBox.innerHTML = d.results.map(c => `
+        <div class="suggestion-item" onclick="selectCity(${c.latitude},${c.longitude},'${c.name.replace(/'/g,'\\'')}',${c.elevation||0})">
+          <div>${c.name}</div>
+          <div class="suggestion-sub">${[c.admin1, c.country].filter(Boolean).join(', ')}</div>
+        </div>`).join('');
+      suggestionsBox.style.display = 'block';
+    } catch(e) {}
+  }, 300);
+});
 
-            reportHTML += `
-                <div class="advice-section">
-                    <div class="advice-title">🌡️ Gestione Spostamenti</div>
-                    <p style="margin:0; line-height:1.5;">Analisi...🚫</p>
-                </div>
-            `;
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) suggestionsBox.style.display = 'none';
+});
 
-            reportHTML += `
-                <div class="advice-section">
-                    <div class="advice-title">💧 Irrigazione e Concimazione Fogliare</div>
-                    <p style="margin:0;">Analisi...🚫</p>
-                </div>
-            `;
+function selectCity(lat, lon, name, elev) {
+  cityInput.value = name;
+  suggestionsBox.style.display = 'none';
+  fetchWeather(lat, lon, name, elev);
+}
 
-            adviceBox.innerHTML = reportHTML;
-            weatherCard.style.display = 'block';
-        }
-    </script>
+function useGPS() {
+  if (!navigator.geolocation) { alert('GPS non disponibile.'); return; }
+  loadingEl.style.display = 'block'; weatherCard.style.display = 'none';
+  cityInput.value = '';
+  navigator.geolocation.getCurrentPosition(
+    p => fetchWeather(p.coords.latitude, p.coords.longitude, 'Posizione attuale', p.coords.altitude || 0),
+    () => { alert('GPS non disponibile o negato.'); loadingEl.style.display = 'none'; }
+  );
+}
+
+// =====================
+// FETCH WEATHER
+// =====================
+async function fetchWeather(lat, lon, locName, elev = 0) {
+  loadingEl.style.display = 'block'; weatherCard.style.display = 'none';
+  lastLat = lat; lastLon = lon;
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,wind_speed_10m,wind_direction_10m,cloud_cover,weathercode,is_day` +
+      `&hourly=temperature_2m,precipitation_probability,wind_speed_10m,soil_temperature_6cm,weathercode,is_day,relativehumidity_2m,dewpoint_2m` +
+      `&daily=temperature_2m_max,temperature_2m_min,uv_index_max,et0_fao_evapotranspiration,weathercode,precipitation_sum,windspeed_10m_max,sunrise,sunset` +
+      `&timezone=auto&forecast_days=7`;
+    const res = await fetch(url);
+    const data = await res.json();
+    renderUI(locName, lat, lon, elev, data);
+  } catch(e) {
+    alert('Errore di connessione alle API meteo.');
+    loadingEl.style.display = 'none';
+  }
+}
+
+// =====================
+// MAIN RENDER
+// =====================
+function renderUI(locName, lat, lon, elev, data) {
+  const c = data.current;
+  const h = data.hourly;
+  const d = data.daily;
+
+  const now = new Date();
+  let hi = h.time.findIndex(t => new Date(t) >= now);
+  if (hi < 0) hi = 0;
+
+  // HEADER
+  document.getElementById('locationName').innerText = locName;
+  document.getElementById('coordsDisplay').innerText = `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E${elev ? ' · ' + Math.round(elev) + 'm slm' : ''}`;
+  document.getElementById('tempDisplay').innerHTML = `${c.temperature_2m}<span class="temp-unit">°C</span>`;
+  document.getElementById('feelsLike').innerText = `Percepita: ${c.apparent_temperature}°C`;
+  document.getElementById('currentIcon').innerText = getWeatherIcon(c.weathercode, c.is_day);
+  document.getElementById('weatherDesc').innerText = getWeatherDesc(c.weathercode);
+
+  // STATS
+  const tMax = d.temperature_2m_max[0], tMin = d.temperature_2m_min[0];
+  document.getElementById('tempRange').innerHTML = `${tMax}° / <span style="color:var(--text2)">${tMin}°</span>`;
+  document.getElementById('tempRangeSub').innerText = `Δ ${(tMax - tMin).toFixed(1)}°C`;
+
+  const hum = c.relative_humidity_2m;
+  document.getElementById('humidity').innerHTML = `${hum}<span class="stat-unit">%</span>`;
+  document.getElementById('humiditySub').innerText = hum > 80 ? '⚠ Rischio funghi' : hum < 40 ? '⚠ Aria secca' : 'Ottimale';
+
+  const wind = c.wind_speed_10m;
+  const wdir = c.wind_direction_10m;
+  document.getElementById('windDisplay').innerHTML = `${wind}<span class="stat-unit">km/h</span>`;
+  document.getElementById('windSub').innerText = `Dir. ${wdir}° · ${windDirName(wdir)}`;
+
+  document.getElementById('rainDisplay').innerHTML = `${c.precipitation}<span class="stat-unit">mm</span>`;
+  document.getElementById('rainSub').innerText = `Oggi totale: ${d.precipitation_sum[0]} mm`;
+
+  const soilT = h.soil_temperature_6cm[hi];
+  document.getElementById('soilTemp').innerHTML = `${soilT}<span class="stat-unit">°C</span>`;
+  document.getElementById('soilSub').innerText = soilT < 15 ? 'Subottimale per radici' : soilT > 30 ? 'Caldo — valuta irrigazione' : 'Ideale per crescita';
+
+  const et0 = d.et0_fao_evapotranspiration[0];
+  document.getElementById('et0').innerHTML = `${et0}<span class="stat-unit">mm</span>`;
+
+  const uv = d.uv_index_max[0];
+  document.getElementById('uvIndex').innerText = uv;
+  document.getElementById('uvSub').innerText = uv >= 11 ? 'Estremo' : uv >= 8 ? 'Molto alto' : uv >= 6 ? 'Alto' : uv >= 3 ? 'Moderato' : 'Basso';
+
+  const cl = c.cloud_cover;
+  document.getElementById('clouds').innerHTML = `${cl}<span class="stat-unit">%</span>`;
+  document.getElementById('cloudSub').innerText = cl < 20 ? 'Cielo sereno' : cl < 60 ? 'Parz. coperto' : 'Coperto';
+
+  // HOURLY
+  renderHourly(h, hi);
+
+  // DAILY
+  renderDaily(d);
+
+  // AGRONOMY
+  renderAgronomy(c, h, d, hi, et0, uv, soilT, hum);
+
+  // ALERTS
+  renderAlerts(c, h, d, hi, et0, uv, soilT, hum);
+
+  loadingEl.style.display = 'none';
+  weatherCard.style.display = 'block';
+}
+
+// =====================
+// HOURLY RENDER
+// =====================
+function renderHourly(h, hi) {
+  const container = document.getElementById('hourlyForecast');
+  container.innerHTML = '';
+  const maxW = Math.max(...h.wind_speed_10m.slice(hi, hi + 24));
+  for (let i = hi; i < hi + 25; i += 1) {
+    if (i >= h.time.length) break;
+    const t = new Date(h.time[i]);
+    const timeStr = t.getHours().toString().padStart(2,'0') + ':00';
+    const icon = getWeatherIcon(h.weathercode[i], h.is_day[i]);
+    const temp = h.temperature_2m[i];
+    const rain = h.precipitation_probability[i];
+    const wspd = h.wind_speed_10m[i];
+    const pct = maxW > 0 ? Math.round((wspd / maxW) * 100) : 0;
+    const isNow = i === hi;
+
+    container.innerHTML += `
+      <div class="hourly-card${isNow ? ' now' : ''}">
+        <div class="h-time">${isNow ? 'ORA' : timeStr}</div>
+        <div class="h-icon">${icon}</div>
+        <div class="h-temp">${temp}°</div>
+        ${rain > 0 ? `<div class="h-rain">💧${rain}%</div>` : `<div style="height:18px"></div>`}
+        <div class="h-wind-bar"><div class="h-wind-fill" style="width:${pct}%"></div></div>
+        <div style="font-size:10px; color:var(--text3)">${wspd}</div>
+      </div>`;
+  }
+}
+
+// =====================
+// DAILY RENDER
+// =====================
+function renderDaily(d) {
+  const container = document.getElementById('dailyForecast');
+  container.innerHTML = '';
+  const allMax = d.temperature_2m_max;
+  const globalMax = Math.max(...allMax);
+  const globalMin = Math.min(...d.temperature_2m_min);
+  const range = globalMax - globalMin || 1;
+
+  for (let i = 0; i < 7; i++) {
+    const name = getDayName(d.time[i], i === 0);
+    const icon = getWeatherIcon(d.weathercode[i], 1);
+    const rain = d.precipitation_sum[i];
+    const tmax = d.temperature_2m_max[i];
+    const tmin = d.temperature_2m_min[i];
+    const barLeft = ((tmin - globalMin) / range * 100).toFixed(1);
+    const barWidth = ((tmax - tmin) / range * 100).toFixed(1);
+
+    container.innerHTML += `
+      <div class="daily-row">
+        <div class="d-day">${name}</div>
+        <div class="d-icon">${icon}</div>
+        <div class="d-bar-wrap"><div class="d-bar-fill" style="margin-left:${barLeft}%; width:${barWidth}%"></div></div>
+        <div class="d-rain">${rain > 0 ? '💧' + rain + 'mm' : '—'}</div>
+        <div class="d-temp">${tmax}°<span>${tmin}°</span></div>
+      </div>`;
+  }
+}
+
+// =====================
+// AGRONOMY ENGINE
+// =====================
+function renderAgronomy(c, h, d, hi, et0, uv, soilT, hum) {
+  const container = document.getElementById('agroGrid');
+  container.innerHTML = '';
+
+  // --- GDD (Growing Degree Days) ---
+  const BASE_TEMP = 10; // Base per peperoni
+  const todayGDD = Math.max(0, ((d.temperature_2m_max[0] + d.temperature_2m_min[0]) / 2) - BASE_TEMP);
+  const weekGDD = d.temperature_2m_max.slice(0, 7).reduce((acc, tmax, i) => {
+    return acc + Math.max(0, ((tmax + d.temperature_2m_min[i]) / 2) - BASE_TEMP);
+  }, 0);
+  const gddPhase = weekGDD < 10 ? 0 : weekGDD < 40 ? 1 : weekGDD < 80 ? 2 : 3;
+  const phases = [
+    { name: 'Germinazione', min: 0 },
+    { name: 'Vegetativo', min: 10 },
+    { name: 'Fioritura', min: 40 },
+    { name: 'Fruttificazione', min: 80 },
+  ];
+
+  container.innerHTML += `
+    <div class="agro-card">
+      <div class="agro-card-title">
+        <div class="agro-icon green">🌱</div>
+        Gradi Giorno (GDD)
+      </div>
+      <div class="gdd-display">
+        <div class="gdd-big">${todayGDD.toFixed(1)}</div>
+        <div class="gdd-label">GDD oggi · Base ${BASE_TEMP}°C · Settimana: ${weekGDD.toFixed(1)}</div>
+      </div>
+      <div class="gdd-phases">
+        ${phases.map((p, i) => `<div class="gdd-phase${i === gddPhase ? ' active' : ''}"><div class="gdd-phase-name">${p.name.substring(0,5)}</div><div>≥${p.min}</div></div>`).join('')}
+      </div>
+    </div>`;
+
+  // --- Rischio Patogeni ---
+  let pathRisk = 'ok', pathTitle = 'Basso', pathDesc = 'Condizioni sfavorevoli per fungosi e batteriosi.';
+  const dewNow = h.dewpoint_2m ? h.dewpoint_2m[hi] : null;
+  const tempNow = h.temperature_2m[hi];
+  const leafWet = hum > 85 && tempNow > 15 && tempNow < 28;
+  if (leafWet) {
+    pathRisk = 'danger'; pathTitle = 'ALTO — Bagnatura fogliare';
+    pathDesc = `Umidità ${hum}% + T ${tempNow}°C: condizioni ideali per Botrytis e Phytophthora. Trattamento preventivo consigliato.`;
+  } else if (hum > 75 || (tempNow > 20 && hum > 65)) {
+    pathRisk = 'warn'; pathTitle = 'Moderato';
+    pathDesc = `Umidità elevata (${hum}%). Monitorare oidio e alternaria. Assicurare ventilazione.`;
+  }
+
+  container.innerHTML += `
+    <div class="agro-card">
+      <div class="agro-card-title"><div class="agro-icon red">🔬</div>Rischio Fitopatologico</div>
+      <div class="risk-indicator">
+        <div class="risk-dot ${pathRisk}"></div>
+        <div class="risk-label">${pathTitle}</div>
+      </div>
+      <div class="risk-desc">${pathDesc}</div>
+      ${dewNow !== null ? `<div style="font-size:11px; color:var(--text3); margin-top:8px;">Punto di rugiada: ${dewNow.toFixed(1)}°C</div>` : ''}
+    </div>`;
+
+  // --- Stress Termico ---
+  const tMax7 = Math.max(...d.temperature_2m_max.slice(0, 7));
+  const tMin7 = Math.min(...d.temperature_2m_min.slice(0, 7));
+  const heatStress = Math.min(100, Math.max(0, (tMax7 - 32) / (45 - 32) * 100));
+  const coldStress = Math.min(100, Math.max(0, (8 - tMin7) / (8 - (-2)) * 100));
+  const stressColor = (s) => s > 70 ? 'var(--red)' : s > 40 ? 'var(--yellow)' : 'var(--green)';
+
+  container.innerHTML += `
+    <div class="agro-card">
+      <div class="agro-card-title"><div class="agro-icon orange">🌡️</div>Stress Termico (7gg)</div>
+      <div style="margin-bottom:10px;">
+        <div style="font-size:11px; color:var(--text3); margin-bottom:4px;">Stress da calore · Max: ${tMax7}°C</div>
+        <div class="stress-bar-track"><div class="stress-bar-fill" style="width:${heatStress.toFixed(0)}%; background:${stressColor(heatStress)}"></div></div>
+        <div class="stress-labels"><span>Ottimale</span><span>Soglia 32°C</span><span>Critico 45°C</span></div>
+      </div>
+      <div>
+        <div style="font-size:11px; color:var(--text3); margin-bottom:4px;">Stress da freddo · Min: ${tMin7}°C</div>
+        <div class="stress-bar-track"><div class="stress-bar-fill" style="width:${coldStress.toFixed(0)}%; background:${stressColor(coldStress)}"></div></div>
+        <div class="stress-labels"><span>Sicuro >8°C</span><span>Danno foglie</span><span>Letale <-2°C</span></div>
+      </div>
+    </div>`;
+
+  // --- Irrigazione Avanzata ---
+  const rain7 = d.precipitation_sum.slice(0, 7).reduce((a, b) => a + b, 0);
+  const netWater = Math.max(0, et0 - d.precipitation_sum[0]);
+  let irrLabel, irrColor;
+  if (et0 > 6) { irrLabel = 'Irrigazione quotidiana'; irrColor = 'var(--orange)'; }
+  else if (et0 > 3.5) { irrLabel = 'Ogni 2 giorni'; irrColor = 'var(--yellow)'; }
+  else if (et0 > 1.5) { irrLabel = 'Ogni 3-4 giorni'; irrColor = 'var(--green)'; }
+  else { irrLabel = 'Sospendere'; irrColor = 'var(--blue)'; }
+
+  container.innerHTML += `
+    <div class="agro-card">
+      <div class="agro-card-title"><div class="agro-icon blue">💧</div>Piano Irrigazione</div>
+      <table class="irr-table">
+        <tr><td>Frequenza consigliata</td><td style="color:${irrColor}">${irrLabel}</td></tr>
+        <tr><td>ET₀ oggi</td><td>${et0} mm</td></tr>
+        <tr><td>Pioggia oggi</td><td>${d.precipitation_sum[0]} mm</td></tr>
+        <tr><td>Fabbisogno netto</td><td>${netWater.toFixed(1)} mm</td></tr>
+        <tr><td>Pioggia 7 giorni</td><td>${rain7.toFixed(1)} mm</td></tr>
+      </table>
+    </div>`;
+
+  // --- Finestre Operative ---
+  const coldWindows = getTemperatureWindows(h, hi, 24);
+  let moveHTML = '';
+  if (coldWindows.freeze.length) {
+    moveHTML = `<div style="color:var(--red);font-size:12px;font-weight:600;margin-bottom:6px;">⚠ Gelate previste — piante al riparo!</div>`;
+    coldWindows.freeze.forEach(w => moveHTML += `<div style="font-size:12px;color:var(--text2)">❄ ${w.start}–${w.end}: T &lt; 0°C → danno irreversibile</div>`);
+  } else if (coldWindows.cold.length) {
+    moveHTML = `<div style="font-size:12px;color:var(--text2);margin-bottom:4px;">Fasce critiche (T &lt; 8°C):</div>`;
+    coldWindows.cold.forEach(w => moveHTML += `<div style="font-size:12px;color:var(--blue)">🌡 ${w.start}–${w.end}: rientrare le piante</div>`);
+    moveHTML += `<div style="font-size:11px;color:var(--text3);margin-top:6px;">All'esterno negli altri orari ✓</div>`;
+  } else {
+    moveHTML = `<div style="color:var(--green);font-size:13px;font-weight:600;">✓ Sicuro per 24h</div><div style="font-size:12px;color:var(--text3);margin-top:4px;">Nessuna soglia critica prevista.</div>`;
+  }
+
+  container.innerHTML += `
+    <div class="agro-card">
+      <div class="agro-card-title"><div class="agro-icon yellow">🚚</div>Gestione Spostamenti</div>
+      ${moveHTML}
+    </div>`;
+
+  // --- Radiazione / Fotosintesi ---
+  const radScore = cl => cl < 20 ? 95 : cl < 50 ? 75 : cl < 80 ? 50 : 25;
+  const cloudNow = c.cloud_cover;
+  const rad = radScore(cloudNow);
+  const uvStr = uv >= 8 ? 'Proteggere le piantine giovani dall\'esposizione diretta.' : uv >= 5 ? 'Buona intensità luminosa per la fotosintesi.' : 'Luce sufficiente. Considera integrazione per colture in serra.';
+
+  container.innerHTML += `
+    <div class="agro-card">
+      <div class="agro-card-title"><div class="agro-icon yellow">☀️</div>Radiazione & Fotosintesi</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px;">
+        <div style="font-size:28px;font-weight:700;color:var(--yellow)">${rad}%</div>
+        <div style="font-size:12px;color:var(--text3)">efficienza stimata</div>
+      </div>
+      <div class="stress-bar-track"><div class="stress-bar-fill" style="width:${rad}%;background:var(--yellow)"></div></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px;">UV max: ${uv} · ${uvStr}</div>
+    </div>`;
+}
+
+// =====================
+// TEMPERATURE WINDOWS
+// =====================
+function getTemperatureWindows(h, hi, hours) {
+  const cold = [], freeze = [];
+  let cSpan = null, fSpan = null;
+  for (let i = hi; i < hi + hours; i++) {
+    if (i >= h.time.length) break;
+    const t = h.temperature_2m[i];
+    const ts = new Date(h.time[i]).getHours().toString().padStart(2,'0') + ':00';
+    if (t < 0) {
+      if (!fSpan) fSpan = { start: ts, end: ts };
+      else fSpan.end = ts;
+    } else {
+      if (fSpan) { freeze.push(fSpan); fSpan = null; }
+    }
+    if (t < 8 && t >= 0) {
+      if (!cSpan) cSpan = { start: ts, end: ts };
+      else cSpan.end = ts;
+    } else {
+      if (cSpan) { cold.push(cSpan); cSpan = null; }
+    }
+  }
+  if (fSpan) freeze.push(fSpan);
+  if (cSpan) cold.push(cSpan);
+  return { cold, freeze };
+}
+
+// =====================
+// ALERTS
+// =====================
+function renderAlerts(c, h, d, hi, et0, uv, soilT, hum) {
+  const container = document.getElementById('alertsDisplay');
+  container.innerHTML = '';
+  const alerts = [];
+
+  const maxWind24 = Math.max(...h.wind_speed_10m.slice(hi, hi + 24));
+  const minTemp24 = Math.min(...h.temperature_2m.slice(hi, hi + 24));
+  const maxTemp24 = Math.max(...h.temperature_2m.slice(hi, hi + 24));
+  const totalRain24 = d.precipitation_sum[0] + (d.precipitation_sum[1] || 0);
+
+  if (minTemp24 < 0) alerts.push({ type: 'danger', icon: '❄️', msg: `ALLERTA GELATA: temperatura minima prevista di ${minTemp24}°C. Proteggere immediatamente le piante con teli termici o portarle al riparo.` });
+  else if (minTemp24 < 8) alerts.push({ type: 'warn', icon: '🌡️', msg: `Temperatura notturna sotto soglia critica (${minTemp24}°C). Rientrare le piante prima del tramonto.` });
+
+  if (maxTemp24 > 38) alerts.push({ type: 'danger', icon: '🔥', msg: `Caldo estremo: picco di ${maxTemp24}°C. Rischio aborto floreale e stress idrico. Ombreggiare e aumentare la frequenza di irrigazione.` });
+  else if (maxTemp24 > 32) alerts.push({ type: 'warn', icon: '☀️', msg: `Temperature elevate (${maxTemp24}°C). Possibile stress termico. Valutare ombreggiatura pomeridiana.` });
+
+  if (maxWind24 > 50) alerts.push({ type: 'danger', icon: '💨', msg: `Vento molto forte (${maxWind24} km/h). Verificare e rinforzare i tutori. Considerare protezione con rete frangivento.` });
+  else if (maxWind24 > 30) alerts.push({ type: 'warn', icon: '💨', msg: `Vento moderato-forte previsto (${maxWind24} km/h). Controllare i supporti delle piante.` });
+
+  if (hum > 85 && maxTemp24 > 18) alerts.push({ type: 'warn', icon: '🦠', msg: `Rischio fitopatologico elevato: umidità ${hum}% + temperature favorevoli a Botrytis e Phytophthora. Considerare trattamento preventivo.` });
+
+  if (uv >= 10) alerts.push({ type: 'warn', icon: '🌞', msg: `Indice UV molto alto (${uv}). Le piantine in fase di acclimatamento potrebbero subire scottature fogliari. Iniziare con esposizione graduale.` });
+
+  if (soilT < 12) alerts.push({ type: 'info', icon: '🌱', msg: `Temperatura del suolo subottimale (${soilT}°C). L'assorbimento radicale di fosforo e microelementi è ridotto sotto i 15°C. Evitare fertilizzazioni di fondo.` });
+  else if (soilT > 32) alerts.push({ type: 'warn', icon: '🟤', msg: `Suolo molto caldo (${soilT}°C). Applicare pacciamatura per ridurre la temperatura e limitare l'evaporazione.` });
+
+  if (et0 > 6) alerts.push({ type: 'info', icon: '💧', msg: `Evapotraspirazione elevata (${et0} mm). Incrementare i volumi di irrigazione. Irrigare preferibilmente nelle ore mattutine.` });
+
+  if (totalRain24 > 40) alerts.push({ type: 'info', icon: '🌧️', msg: `Piogge abbondanti previste (${totalRain24.toFixed(1)} mm su 2 giorni). Verificare il drenaggio dei vasi. Sospendere l'irrigazione.` });
+
+  if (alerts.length === 0) {
+    container.innerHTML = `<div class="alert ok"><div class="alert-icon">✅</div><div>Tutte le condizioni agrometeorologiche sono nella norma. Nessun intervento urgente richiesto per le prossime 24 ore.</div></div>`;
+  } else {
+    alerts.forEach(a => {
+      container.innerHTML += `<div class="alert ${a.type}"><div class="alert-icon">${a.icon}</div><div>${a.msg}</div></div>`;
+    });
+  }
+}
+
+// =====================
+// UTILS
+// =====================
+function windDirName(deg) {
+  const d = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
+  return d[Math.round(deg / 22.5) % 16];
+}
+</script>
 </body>
 </html>
