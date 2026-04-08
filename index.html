@@ -6,14 +6,13 @@
     <title>PepperWeather Pro - Frutiger Aero</title>
     <style>
         /* =========================================
-           STILE FRUTIGER AERO - AGGIORNATO
+           STILE FRUTIGER AERO
            ========================================= */
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Sfondo ricco con gradienti azzurro-verde e pattern di onde/bolle */
             background: linear-gradient(135deg, #4facfe, #00f2fe 40%, #e0f6ff 60%, #96e6a1), 
                         url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9Ii4xIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyMCIvPjwvZz48L3N2Zz4=');
             background-size: cover, 100px 100px;
@@ -33,7 +32,6 @@
             text-align: center;
         }
 
-        /* Pannelli di vetro più traslucidi */
         .glass-panel {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 100%);
             border: 1px solid rgba(255, 255, 255, 0.8);
@@ -42,7 +40,7 @@
             backdrop-filter: blur(15px);
             padding: 20px;
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -57,7 +55,6 @@
             outline: none;
         }
 
-        /* Pulsanti lucidi e colorati */
         .glossy-btn {
             background: linear-gradient(to bottom, #a0d8ef 0%, #4682b4 100%);
             border: 1px solid #ffffff;
@@ -78,40 +75,38 @@
 
         .controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; }
 
-        /* Dati Meteo Principali */
-        .temp-main { font-size: 3em; color: #ff5722; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); font-weight: bold; margin: 0;}
+        .temp-main { font-size: 3.5em; color: #ff5722; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); font-weight: bold; margin: 0;}
         .condition-main { font-size: 1.2em; font-weight: bold; color: #0288d1; margin-bottom: 15px; }
 
-        /* Griglia Dettagli Giornalieri */
+        /* Griglia Dettagli più ampia */
         .details-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 15px;
             padding: 15px;
             margin-bottom: 20px;
             border: 1px solid rgba(255,255,255,0.6);
+            text-align: left;
         }
-        .detail-item { font-size: 0.95em; font-weight: bold; }
-        .detail-item span { color: #d32f2f; font-weight: normal; }
+        .detail-item { font-size: 0.9em; font-weight: bold; padding: 5px; background: rgba(255,255,255,0.4); border-radius: 8px;}
+        .detail-item span { color: #d32f2f; font-weight: bold; float: right; }
 
-        /* Box Orario (Scroll Orizzontale) */
         h3 { margin: 5px 0 15px 0; color: #01579b; }
+        
         .hourly-container {
             display: flex;
             overflow-x: auto;
-            gap: 15px;
+            gap: 10px;
             padding: 10px 5px 20px 5px;
         }
-        
-        /* Scrollbar stile vetro/acqua */
         .hourly-container::-webkit-scrollbar { height: 10px; }
         .hourly-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
         .hourly-container::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #8fc3ea, #4682b4); border-radius: 10px; border: 1px solid white;}
 
         .hourly-card {
-            min-width: 80px;
+            min-width: 85px;
             background: rgba(255, 255, 255, 0.5);
             border: 1px solid white;
             border-radius: 15px;
@@ -121,29 +116,25 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
         .h-time { font-weight: bold; color: #024b7a; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px;}
-        .h-temp { color: #ff5722; font-weight: bold; font-size: 1.1em; }
-        .h-rain { color: #009688; font-size: 0.8em; }
-        .h-wind { color: #0288d1; font-size: 0.8em; }
+        .h-temp { color: #ff5722; font-weight: bold; font-size: 1.2em; }
 
-        /* Box Consigli professionali */
+        /* Box Consigli a lista */
         .advice-box {
             margin-top: 20px;
             padding: 15px;
             border-radius: 15px;
-            font-size: 1.05em;
-            line-height: 1.4;
-            font-weight: bold;
-            background: rgba(255, 255, 255, 0.4);
+            font-size: 0.95em;
+            line-height: 1.5;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.5);
             border: 1px solid white;
-            box-shadow: inset 0 0 10px rgba(255,255,255,0.4);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
         }
-
-        .alert-danger { background: rgba(255, 100, 100, 0.3); border-color: #ff4444; color: #900;}
-        .alert-warning { background: rgba(255, 200, 100, 0.3); border-color: #ffaa00; color: #850;}
-        .alert-success { background: rgba(100, 255, 100, 0.3); border-color: #22cc22; color: #060;}
+        .advice-box ul { padding-left: 20px; margin: 10px 0 0 0; }
+        .advice-box li { margin-bottom: 8px; }
 
         #loading { display: none; color: #fff; font-weight: bold; font-size: 1.2em; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);}
     </style>
@@ -153,35 +144,32 @@
     <h1>🌶️ PepperWeather Pro</h1>
     
     <div class="glass-panel">
-        <p>Monitoraggio avanzato per le tue piante di peperoncino.</p>
         <div class="controls">
             <input type="text" id="cityInput" placeholder="Cerca una città...">
             <button class="glossy-btn" onclick="searchCity()">Cerca</button>
+            <button class="glossy-btn btn-green" onclick="useGPS()">📍 GPS</button>
         </div>
-        <div class="controls">
-            <button class="glossy-btn btn-green" onclick="useGPS()">📍 Usa Posizione Attuale</button>
-        </div>
-        <div id="loading">Analisi atmosferica in corso... ⏳</div>
+        <div id="loading">Sincronizzazione dati atmosferici... ⏳</div>
     </div>
 
     <div class="glass-panel" id="weatherCard" style="display: none;">
         <h2 id="locationName" style="margin-bottom: 5px;">Località</h2>
-        
         <p class="temp-main" id="tempDisplay">--°C</p>
-        <div class="condition-main" id="conditionDisplay">Attualmente</div>
+        <div class="condition-main" id="conditionDisplay">Dati Attuali</div>
 
         <div class="details-grid">
-            <div class="detail-item">⬇️ Minima: <span id="minTemp">--</span>°C</div>
-            <div class="detail-item">⬆️ Massima: <span id="maxTemp">--</span>°C</div>
+            <div class="detail-item">🌡️ Max/Min: <span id="tempRange">--</span></div>
             <div class="detail-item">💧 Umidità: <span id="humidity">--</span>%</div>
-            <div class="detail-item">☀️ Indice UV: <span id="uvIndex">--</span></div>
             <div class="detail-item">💨 Vento: <span id="windDisplay">--</span> km/h</div>
-            <div class="detail-item">🌧️ Pioggia oggi: <span id="rainDisplay">--</span> mm</div>
+            <div class="detail-item">🌧️ Pioggia: <span id="rainDisplay">--</span> mm</div>
+            <div class="detail-item">🟤 Temp. Suolo: <span id="soilTemp">--</span>°C</div>
+            <div class="detail-item">🚰 Fabb. Idrico: <span id="et0">--</span> mm</div>
+            <div class="detail-item">☁️ Nuvolosità: <span id="clouds">--</span>%</div>
+            <div class="detail-item">☀️ UV Index: <span id="uvIndex">--</span></div>
         </div>
 
         <h3>Previsioni prossime 24h</h3>
-        <div class="hourly-container" id="hourlyForecast">
-            </div>
+        <div class="hourly-container" id="hourlyForecast"></div>
         
         <div id="adviceDisplay" class="advice-box">
             </div>
@@ -193,135 +181,131 @@
 
         function useGPS() {
             if (navigator.geolocation) {
-                loadingDiv.style.display = 'block';
-                weatherCard.style.display = 'none';
+                loadingDiv.style.display = 'block'; weatherCard.style.display = 'none';
                 navigator.geolocation.getCurrentPosition(
-                    (position) => { fetchWeather(position.coords.latitude, position.coords.longitude, "La tua Posizione"); },
-                    () => { alert("Permesso negato o errore GPS."); loadingDiv.style.display = 'none'; }
+                    (p) => fetchWeather(p.coords.latitude, p.coords.longitude, "Posizione Attuale"),
+                    () => { alert("Permesso negato."); loadingDiv.style.display = 'none'; }
                 );
-            } else { alert("GPS non supportato."); }
+            } else alert("GPS non supportato.");
         }
 
         async function searchCity() {
             const city = document.getElementById('cityInput').value;
-            if (!city) return alert("Inserisci una città!");
-
-            loadingDiv.style.display = 'block';
-            weatherCard.style.display = 'none';
-
+            if (!city) return;
+            loadingDiv.style.display = 'block'; weatherCard.style.display = 'none';
             try {
-                const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=it&format=json`);
-                const geoData = await geoRes.json();
-                if (!geoData.results) throw new Error("Città non trovata");
-                fetchWeather(geoData.results[0].latitude, geoData.results[0].longitude, geoData.results[0].name);
-            } catch (error) {
-                alert("Città non trovata. Riprova.");
-                loadingDiv.style.display = 'none';
-            }
+                const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=it&format=json`);
+                const data = await res.json();
+                if (!data.results) throw new Error();
+                fetchWeather(data.results[0].latitude, data.results[0].longitude, data.results[0].name);
+            } catch (e) { alert("Città non trovata."); loadingDiv.style.display = 'none'; }
         }
 
-        async function fetchWeather(lat, lon, locationName) {
+        async function fetchWeather(lat, lon, locName) {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&hourly=temperature_2m,precipitation_probability,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto&forecast_days=2`;
+                // API Estesa con Suolo, Evapotraspirazione, Nuvole e Radiazione
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,cloud_cover&hourly=temperature_2m,precipitation_probability,wind_speed_10m,soil_temperature_6cm&daily=temperature_2m_max,temperature_2m_min,uv_index_max,et0_fao_evapotranspiration&timezone=auto&forecast_days=2`;
                 const res = await fetch(url);
                 const data = await res.json();
-                updateUI(locationName, data);
-            } catch (error) {
-                alert("Errore nel recupero dati meteo.");
+                updateUI(locName, data);
+            } catch (e) {
+                alert("Errore API Meteo.");
             } finally {
                 loadingDiv.style.display = 'none';
             }
         }
 
-        function updateUI(locationName, data) {
+        function updateUI(locName, data) {
             const current = data.current;
             const daily = data.daily;
+            const now = new Date();
+            let hIndex = data.hourly.time.findIndex(t => new Date(t) >= now);
+            if(hIndex === -1) hIndex = 0;
             
-            document.getElementById('locationName').innerText = locationName;
+            // Popolamento UI Base
+            document.getElementById('locationName').innerText = locName;
             document.getElementById('tempDisplay').innerText = current.temperature_2m + "°";
+            document.getElementById('tempRange').innerText = daily.temperature_2m_max[0] + "° / " + daily.temperature_2m_min[0] + "°";
             document.getElementById('humidity').innerText = current.relative_humidity_2m;
             document.getElementById('windDisplay').innerText = current.wind_speed_10m;
             document.getElementById('rainDisplay').innerText = current.precipitation;
+            document.getElementById('clouds').innerText = current.cloud_cover;
+            document.getElementById('uvIndex').innerText = daily.uv_index_max[0];
             
-            document.getElementById('maxTemp').innerText = daily.temperature_2m_max[0];
-            document.getElementById('minTemp').innerText = daily.temperature_2m_min[0];
-            document.getElementById('uvIndex').innerText = daily.uv_index_max[0] || "--";
+            // Dati Avanzati
+            const soilTemp = data.hourly.soil_temperature_6cm[hIndex];
+            const et0 = daily.et0_fao_evapotranspiration[0]; // Fabbisogno idrico (mm d'acqua persi)
+            document.getElementById('soilTemp').innerText = soilTemp;
+            document.getElementById('et0').innerText = et0;
 
+            // Previsioni Orarie
             const hourlyContainer = document.getElementById('hourlyForecast');
             hourlyContainer.innerHTML = ''; 
-            
-            const now = new Date();
-            let currentIndex = data.hourly.time.findIndex(timeStr => new Date(timeStr) >= now);
-            if(currentIndex === -1) currentIndex = 0; 
-
-            for (let i = currentIndex; i < currentIndex + 24; i++) {
+            for (let i = hIndex; i < hIndex + 24; i+=2) { // Step di 2 ore per pulizia
                 if(i >= data.hourly.time.length) break; 
-                
-                const timeObj = new Date(data.hourly.time[i]);
-                const hourStr = timeObj.getHours().toString().padStart(2, '0') + ":00";
-                const temp = data.hourly.temperature_2m[i];
-                const rainProb = data.hourly.precipitation_probability[i];
-                const wind = data.hourly.wind_speed_10m[i];
-
-                const cardHTML = `
+                const timeStr = new Date(data.hourly.time[i]).getHours().toString().padStart(2, '0') + ":00";
+                hourlyContainer.innerHTML += `
                     <div class="hourly-card">
-                        <div class="h-time">${hourStr}</div>
-                        <div class="h-temp">${temp}°</div>
-                        <div class="h-rain">💧 ${rainProb}%</div>
-                        <div class="h-wind">💨 ${wind} km/h</div>
-                    </div>
-                `;
-                hourlyContainer.innerHTML += cardHTML;
+                        <div class="h-time">${timeStr}</div>
+                        <div class="h-temp">${data.hourly.temperature_2m[i]}°</div>
+                        <div style="font-size: 0.8em; color: #009688">💧 ${data.hourly.precipitation_probability[i]}%</div>
+                        <div style="font-size: 0.8em; color: #0288d1">💨 ${data.hourly.wind_speed_10m[i]}</div>
+                    </div>`;
             }
 
             // =========================================
-            // LOGICA AVANZATA PEPERONCINI - AGGIORNATA
+            // MOTORE LOGICO AGRONOMICO PEPERONCINI
             // =========================================
             const adviceBox = document.getElementById('adviceDisplay');
-            adviceBox.className = 'advice-box'; 
-            let adviceHTML = "";
-            let status = "success"; 
+            let adviceList = [];
 
-            const temp = current.temperature_2m;
-            const minTemp = daily.temperature_2m_min[0];
-            const maxTemp = daily.temperature_2m_max[0];
-            const hum = current.relative_humidity_2m;
-            const uv = daily.uv_index_max[0];
-            
-            // 1. Allarmi Critici (Rosso)
-            if (minTemp < 10) {
-                adviceHTML += "<p>🥶 **Minima notturna bassa:** La minima scenderà a " + minTemp + "°C. Rischio di blocco della crescita. Sposta le piante al riparo.</p>";
-                status = "danger";
-            }
-            if (current.wind_speed_10m > 35) {
-                adviceHTML += "<p>💨 **Vento forte previsto:** Velocità di " + current.wind_speed_10m + " km/h. Proteggi o ancora i fusti.</p>";
-                status = "danger";
+            // 1. ANALISI TERMICA E LUCE
+            if (daily.temperature_2m_min[0] < 12) {
+                adviceList.push("🔴 <strong>Allarme Freddo:</strong> Minima sotto i 12°C. Blocca il metabolismo. Tieni in casa o in serra chiusa.");
+            } else if (daily.temperature_2m_max[0] > 34) {
+                adviceList.push("🟠 <strong>Troppo Caldo:</strong> Sopra i 34°C rischio caduta fiori (cascola). Ombreggia nelle ore centrali.");
+            } else {
+                adviceList.push("🟢 <strong>Temperature:</strong> Range termico ideale per lo sviluppo fogliare e la fioritura.");
             }
 
-            // 2. Avvisi (Arancione)
-            if (status !== "danger") {
-                if (maxTemp > 34) {
-                    adviceHTML += "<p>☀️ **Massima alta:** " + maxTemp + "°C prevista. Rischio di caduta dei fiori. Ombreggia se necessario.</p>";
-                    status = "warning";
-                }
-                if (hum > 80 && current.precipitation > 0) {
-                    adviceHTML += "<p>🍄 **Umidità elevata:** " + hum + "% e pioggia. Rischio di malattie fungine. Evita ristagni idrici.</p>";
-                    status = "warning";
-                }
-                if (uv > 8) {
-                    adviceHTML += "<p>🕶️ **UV alto previsto:** Indice UV di " + uv + ". Proteggi le piantine giovani per evitare scottature fogliari.</p>";
-                    status = "warning";
+            if (current.cloud_cover > 75) {
+                adviceList.push("☁️ <strong>Luce scarsa:</strong> Fotosintesi rallentata oggi a causa delle nuvole.");
+            }
+
+            // 2. ANALISI SUOLO E TRAPIANTI
+            if (soilTemp < 15) {
+                adviceList.push("🟤 <strong>Suolo freddo ("+soilTemp+"°C):</strong> Assolutamente NON trapiantare oggi, le radici andrebbero in shock termico.");
+            } else if (soilTemp > 30) {
+                adviceList.push("🟤 <strong>Suolo rovente ("+soilTemp+"°C):</strong> Se coltivi in vasi neri, proteggili dal sole diretto o le radici cuoceranno.");
+            }
+
+            // 3. ANALISI IDRICA (Evapotraspirazione vs Pioggia)
+            if (current.precipitation > 5) {
+                adviceList.push("🌧️ <strong>Rischio Ristagni:</strong> Pioggia abbondante. Assicurati che i sottovasi siano vuoti per evitare asfissia radicale.");
+            } else {
+                if (et0 > 5) {
+                    adviceList.push("🚰 <strong>Sete elevata:</strong> Evapotraspirazione alta ("+et0+"mm). Il vento e il sole asciugheranno i vasi in fretta. Controlla e annaffia al tramonto.");
+                } else if (et0 < 2) {
+                    adviceList.push("💧 <strong>Sete bassa:</strong> Il terriccio resterà umido a lungo. Annaffia solo se i primi 3 cm di terra sono completamente secchi.");
                 }
             }
 
-            // 3. Situazione Ideale (Verde)
-            if (adviceHTML === "") {
-                adviceHTML = "<p>✅ **Condizioni climatiche ottimali.** Temperature stabili e nessun rischio immediato per le piante.</p>";
-                status = "success";
+            // 4. ANALISI VENTO
+            let maxWindNext24h = Math.max(...data.hourly.wind_speed_10m.slice(hIndex, hIndex+24));
+            if (maxWindNext24h > 35) {
+                adviceList.push("💨 <strong>Pericolo Vento ("+maxWindNext24h+" km/h):</strong> Raffiche forti previste. Lega le piante ai tutori o ripara i vasi.");
             }
 
-            adviceBox.classList.add('alert-' + status);
-            adviceBox.innerHTML = adviceHTML;
+            // 5. ALLARME MALATTIE E PARASSITI
+            if (current.temperature_2m > 25 && current.relative_humidity_2m < 40) {
+                adviceList.push("🕷️ <strong>Allarme Ragnetto Rosso:</strong> Clima caldo e secco ideale per gli acari. Nebulizza leggermente le foglie la sera per dissuaderli.");
+            }
+            if (current.temperature_2m > 20 && current.temperature_2m < 28 && current.relative_humidity_2m > 80 && current.precipitation > 0) {
+                adviceList.push("🍄 <strong>Rischio Funghi/Oidio:</strong> Clima molto umido e piovoso. Garantisci buona ventilazione tra le foglie e non bagnarle.");
+            }
+
+            // Generazione HTML
+            adviceBox.innerHTML = "<strong>📊 Report Agronomico:</strong><ul>" + adviceList.map(a => `<li>${a}</li>`).join('') + "</ul>";
             weatherCard.style.display = 'block';
         }
     </script>
