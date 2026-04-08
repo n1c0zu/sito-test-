@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PepperStats - Monitoraggio Peperoncini</title>
+    <title>PepperStats Pro - Advanced Agronomy</title>
     <style>
         /* =========================================
-           STILE FRUTIGER AERO (GLOSSY & FRESH)
+           STILE FRUTIGER AERO (RETRO-TECH)
            ========================================= */
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            /* Sfondo ultra-glossy tipico del 2005-2010 */
+            /* Font iconico dell'era Windows XP/Vista */
+            font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, sans-serif;
             background: radial-gradient(circle at 50% 0%, #74ebd5 0%, #9face6 50%, #2af598 100%);
             background-attachment: fixed;
             color: #013a63;
@@ -24,7 +24,7 @@
             box-sizing: border-box;
         }
 
-        /* Effetto bolle decorative in background */
+        /* Effetto bolle/acquatico */
         body::before {
             content: "";
             position: fixed;
@@ -36,46 +36,48 @@
 
         h1 {
             color: #ffffff;
-            text-shadow: 0px 3px 6px rgba(0,0,0,0.2), 0 0 15px rgba(255,255,255,0.5);
+            text-shadow: 0px 3px 6px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.5);
             font-size: 2.8em;
             margin-bottom: 15px;
             letter-spacing: -1px;
         }
 
         .glass-panel {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 100%);
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.3) 100%);
+            border: 1px solid rgba(255, 255, 255, 1);
+            border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0, 50, 100, 0.15), inset 0 2px 10px rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
             padding: 25px;
             width: 100%;
-            max-width: 650px;
+            max-width: 700px;
             margin-bottom: 25px;
             position: relative;
             overflow: hidden;
         }
 
-        /* Riflesso lucido sul pannello */
+        /* Riflesso lucido diagonale tipico del Frutiger Aero */
         .glass-panel::after {
             content: "";
             position: absolute;
             top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
             transform: rotate(30deg);
             pointer-events: none;
         }
 
-        .controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 5px; }
+        .controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 5px; position: relative; z-index: 2; }
 
         input[type="text"] {
             padding: 12px 20px;
             border-radius: 30px;
             border: 1px solid #a2d2ff;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
             width: 220px;
             outline: none;
+            font-family: inherit;
+            font-size: 15px;
         }
 
         .glossy-btn {
@@ -85,34 +87,38 @@
             color: white;
             padding: 12px 24px;
             font-weight: bold;
+            font-family: inherit;
+            font-size: 15px;
             cursor: pointer;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
             box-shadow: 0 4px 15px rgba(0, 136, 255, 0.3), inset 0 2px 5px rgba(255,255,255,0.5);
-            transition: 0.3s;
+            transition: all 0.2s ease-in-out;
         }
 
-        .glossy-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
-        .btn-gps { background: linear-gradient(to bottom, #43e97b 0%, #38f9d7 100%); color: #005f56; }
+        .glossy-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn-gps { background: linear-gradient(to bottom, #43e97b 0%, #38f9d7 100%); color: #005f56; text-shadow: 0 1px 1px rgba(255,255,255,0.5);}
 
-        .temp-main { font-size: 4em; color: #ff6b35; font-weight: 800; margin: 10px 0; text-shadow: 2px 2px 0px #fff; }
+        .temp-main { font-size: 4em; color: #ff5722; font-weight: 800; margin: 10px 0; text-shadow: 2px 2px 0px #fff; }
 
         .details-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
             text-align: left;
             margin-top: 20px;
+            position: relative; z-index: 2;
         }
 
         .detail-item {
-            background: rgba(255, 255, 255, 0.4);
-            padding: 10px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.5);
-            font-size: 0.85em;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.8);
+            font-size: 0.9em;
             font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .detail-item span { float: right; color: #0077b6; }
+        .detail-item span { float: right; color: #005f56; font-weight: normal;}
 
         .hourly-container {
             display: flex;
@@ -120,60 +126,82 @@
             gap: 12px;
             padding: 15px 5px;
             scrollbar-width: thin;
+            position: relative; z-index: 2;
         }
         .hourly-card {
             min-width: 90px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 18px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 15px;
             padding: 12px;
             border: 1px solid #fff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            text-align: center;
         }
 
+        /* Stile Report Analitico */
         .advice-box {
-            margin-top: 20px;
+            margin-top: 25px;
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 15px;
             text-align: left;
-            background: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.7);
             border: 1px solid #fff;
             font-size: 0.95em;
+            position: relative; z-index: 2;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.8);
         }
-        .advice-box ul { padding-left: 18px; margin: 10px 0 0 0; }
-        .advice-box li { margin-bottom: 8px; }
+        
+        .advice-section {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 119, 182, 0.2);
+        }
+        .advice-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        
+        .advice-title {
+            color: #013a63;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .advice-text { margin: 0; line-height: 1.5; color: #333; }
 
-        #loading { display: none; font-weight: bold; color: white; text-shadow: 1px 1px 4px rgba(0,0,0,0.2); }
+        #loading { display: none; font-weight: bold; color: white; text-shadow: 1px 1px 4px rgba(0,0,0,0.3); margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <h1>🌶️ PepperStats</h1>
+    <h1>🌶️ PepperStats Pro</h1>
     
     <div class="glass-panel">
         <div class="controls">
-            <input type="text" id="cityInput" placeholder="Inserisci città...">
-            <button class="glossy-btn" onclick="searchCity()">Aggiorna</button>
-            <button class="glossy-btn btn-gps" onclick="useGPS()">📍 GPS</button>
+            <input type="text" id="cityInput" placeholder="Ricerca stazione meteo...">
+            <button class="glossy-btn" onclick="searchCity()">Analizza</button>
+            <button class="glossy-btn btn-gps" onclick="useGPS()">📍 Auto-Loc</button>
         </div>
-        <div id="loading">Recupero dati in corso...</div>
+        <div id="loading">Sincronizzazione dati satellitari in corso...</div>
     </div>
 
     <div class="glass-panel" id="weatherCard" style="display: none;">
-        <h2 id="locationName" style="margin:0; color: #0077b6;">Località</h2>
+        <h2 id="locationName" style="margin:0; color: #013a63; letter-spacing: -0.5px;">Località</h2>
         <p class="temp-main" id="tempDisplay">--°C</p>
         
         <div class="details-grid">
-            <div class="detail-item">🌡️ Max/Min: <span id="tempRange">--</span></div>
-            <div class="detail-item">💧 Umidità: <span id="humidity">--</span>%</div>
-            <div class="detail-item">💨 Vento: <span id="windDisplay">--</span> km/h</div>
-            <div class="detail-item">🌧️ Pioggia: <span id="rainDisplay">--</span> mm</div>
-            <div class="detail-item">🟤 Temp. Suolo: <span id="soilTemp">--</span>°C</div>
-            <div class="detail-item">🚰 Evapo/Trasp: <span id="et0">--</span> mm</div>
-            <div class="detail-item">☀️ Indice UV: <span id="uvIndex">--</span></div>
-            <div class="detail-item">☁️ Nuvole: <span id="clouds">--</span>%</div>
+            <div class="detail-item">🌡️ Range Temp: <span id="tempRange">--</span></div>
+            <div class="detail-item">💧 Umidità Rel.: <span id="humidity">--</span>%</div>
+            <div class="detail-item">💨 Vento (Raffica): <span id="windDisplay">--</span> km/h</div>
+            <div class="detail-item">🌧️ Precipitazioni: <span id="rainDisplay">--</span> mm</div>
+            <div class="detail-item">🟤 Temp. Suolo (-6cm): <span id="soilTemp">--</span>°C</div>
+            <div class="detail-item">🚰 Evapotraspirazione: <span id="et0">--</span> mm</div>
+            <div class="detail-item">☀️ Indice UV (Max): <span id="uvIndex">--</span></div>
+            <div class="detail-item">☁️ Copertura Nuvole: <span id="clouds">--</span>%</div>
         </div>
 
-        <h3 style="margin-top:25px; color: #0077b6;">Prossime 24 ore</h3>
+        <h3 style="margin-top:25px; color: #013a63; border-bottom: 2px solid rgba(255,255,255,0.6); padding-bottom: 5px;">Telemetria Prossime 24 Ore</h3>
         <div class="hourly-container" id="hourlyForecast"></div>
         
         <div id="adviceDisplay" class="advice-box"></div>
@@ -185,10 +213,10 @@
 
         function useGPS() {
             if (navigator.geolocation) {
-                loadingDiv.style.display = 'block';
+                loadingDiv.style.display = 'block'; weatherCard.style.display = 'none';
                 navigator.geolocation.getCurrentPosition(
-                    (p) => fetchWeather(p.coords.latitude, p.coords.longitude, "Tua Posizione"),
-                    () => { alert("GPS non disponibile."); loadingDiv.style.display = 'none'; }
+                    (p) => fetchWeather(p.coords.latitude, p.coords.longitude, "Coordinate Locali"),
+                    () => { alert("Segnale GPS assente o permessi negati."); loadingDiv.style.display = 'none'; }
                 );
             }
         }
@@ -196,13 +224,13 @@
         async function searchCity() {
             const city = document.getElementById('cityInput').value;
             if (!city) return;
-            loadingDiv.style.display = 'block';
+            loadingDiv.style.display = 'block'; weatherCard.style.display = 'none';
             try {
                 const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=it&format=json`);
                 const data = await res.json();
                 if (!data.results) throw new Error();
                 fetchWeather(data.results[0].latitude, data.results[0].longitude, data.results[0].name);
-            } catch (e) { alert("Città non trovata."); loadingDiv.style.display = 'none'; }
+            } catch (e) { alert("Stazione non individuata."); loadingDiv.style.display = 'none'; }
         }
 
         async function fetchWeather(lat, lon, locName) {
@@ -211,14 +239,14 @@
                 const res = await fetch(url);
                 const data = await res.json();
                 updateUI(locName, data);
-            } catch (e) { alert("Errore connessione."); } finally { loadingDiv.style.display = 'none'; }
+            } catch (e) { alert("Errore di connessione API."); } finally { loadingDiv.style.display = 'none'; }
         }
 
         function updateUI(locName, data) {
             const current = data.current;
             const daily = data.daily;
-            const hIndex = 0; 
 
+            // Mapping Base Data
             document.getElementById('locationName').innerText = locName;
             document.getElementById('tempDisplay').innerText = current.temperature_2m + "°";
             document.getElementById('tempRange').innerText = daily.temperature_2m_max[0] + "° / " + daily.temperature_2m_min[0] + "°";
@@ -230,50 +258,118 @@
             document.getElementById('uvIndex').innerText = daily.uv_index_max[0];
             document.getElementById('clouds').innerText = current.cloud_cover;
 
+            // Hourly Forecasting
             const hourlyContainer = document.getElementById('hourlyForecast');
             hourlyContainer.innerHTML = ''; 
             for (let i = 0; i < 24; i+=2) {
-                const time = new Date(data.hourly.time[i]).getHours() + ":00";
+                const timeStr = new Date(data.hourly.time[i]).getHours().toString().padStart(2, '0') + ":00";
                 hourlyContainer.innerHTML += `
                     <div class="hourly-card">
-                        <div style="font-weight:bold">${time}</div>
-                        <div style="color:#ff6b35; font-size:1.1em">${data.hourly.temperature_2m[i]}°</div>
-                        <div style="font-size:0.75em">💧${data.hourly.precipitation_probability[i]}%</div>
+                        <div style="font-weight:bold; color:#013a63; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:4px; margin-bottom:4px;">${timeStr}</div>
+                        <div style="color:#ff5722; font-size:1.15em; font-weight:bold;">${data.hourly.temperature_2m[i]}°</div>
+                        <div style="font-size:0.8em; color:#005f56; margin-top:2px;">Vento: ${data.hourly.wind_speed_10m[i]}</div>
                     </div>`;
             }
 
             // =========================================
-            // LOGICA PEPPERSTATS (SOGLIA 8°C)
+            // MOTORE ANALITICO PEPPERSTATS PRO
             // =========================================
             const adviceBox = document.getElementById('adviceDisplay');
-            let advice = [];
+            let reportHTML = "";
+
             const minT = daily.temperature_2m_min[0];
             const maxT = daily.temperature_2m_max[0];
             const et0 = daily.et0_fao_evapotranspiration[0];
 
-            // 1. Temperatura (Nuova soglia 8°C richiesta)
+            // --- 1. LOGISTICA E SPOSTAMENTI (Indoor/Outdoor/Ombra) ---
+            let logisticAdvice = "";
+            let coldHours = [];
+            let hotHours = [];
+            
+            // Analizza le prossime 24 ore per trovare le finestre critiche
+            for (let i = 0; i < 24; i++) {
+                if (data.hourly.temperature_2m[i] <= 12) coldHours.push(new Date(data.hourly.time[i]).getHours());
+                if (data.hourly.temperature_2m[i] >= 34) hotHours.push(new Date(data.hourly.time[i]).getHours());
+            }
+
             if (minT < 8) {
-                advice.push("🚨 <strong>PERICOLO FREDDO:</strong> Minima di " + minT + "°C prevista. <strong>SPOSTA LE PIANTE IN CASA IMMEDIATAMENTE</strong>.");
-            } else if (minT < 12) {
-                advice.push("⚠️ <strong>Fresco:</strong> Minima tra 8 e 12°C. La crescita rallenta, valuta riparo notturno.");
-            } else if (maxT > 34) {
-                advice.push("☀️ <strong>Stress Termico:</strong> Picco di " + maxT + "°C. Possibile caduta fiori. Ombreggia.");
+                logisticAdvice = `<span style="color:red; font-weight:bold;">ALLERTA TERMICA (Soglia <8°C superata):</span> Spostare le piante in ambiente protetto (indoor). `;
+                if (coldHours.length > 0) {
+                    let firstCold = coldHours[0].toString().padStart(2, '0') + ":00";
+                    let lastCold = coldHours[coldHours.length - 1].toString().padStart(2, '0') + ":00";
+                    logisticAdvice += `Ritiro consigliato entro le ore ${firstCold}. Mantenere indoor almeno fino alle ore ${lastCold} di domani per evitare shock radicali.`;
+                }
+            } else if (hotHours.length > 0) {
+                let firstHot = hotHours[0].toString().padStart(2, '0') + ":00";
+                let lastHot = hotHours[hotHours.length - 1].toString().padStart(2, '0') + ":00";
+                logisticAdvice = `Rilevato picco di calore estremo. Predisporre rete ombreggiante (min. 50%) o spostare a mezz'ombra dalle ore ${firstHot} alle ore ${lastHot} per prevenire ustioni fogliari e cascola.`;
+            } else {
+                logisticAdvice = "Condizioni di temperatura ottimali. Le piante possono rimanere in esposizione esterna standard per l'intero ciclo delle 24 ore.";
             }
 
-            // 2. Acqua (Evapotraspirazione)
-            if (et0 > 5) {
-                advice.push("🚰 <strong>Irrigazione:</strong> Consumo idrico elevato ("+et0+"mm). Terriccio in rapida asciugatura.");
+            reportHTML += `
+                <div class="advice-section">
+                    <div class="advice-title">🌡️ Gestione Termica e Logistica</div>
+                    <p class="advice-text">${logisticAdvice}</p>
+                </div>
+            `;
+
+            // --- 2. PIANO DI IRRIGAZIONE STIMATO ---
+            // Basato su ET0 (Evapotraspirazione: millimetri d'acqua persi per evaporazione e traspirazione) ignorando le precipitazioni
+            let waterAdvice = "";
+            let waterFreq = "";
+            
+            if (et0 > 5.0 || maxT > 32) {
+                waterFreq = "Quotidiana (Alta Frequenza)";
+                waterAdvice = `L'evapotraspirazione è severa (${et0} mm/g). Il substrato si disidraterà rapidamente. Irrigare abbondantemente una volta al giorno, preferibilmente alle prime ore del mattino (entro le 08:00) per garantire turgore cellulare durante il picco termico.`;
+            } else if (et0 >= 2.5 && et0 <= 5.0) {
+                waterFreq = "Ogni 2-3 giorni (Media Frequenza)";
+                waterAdvice = `Consumo idrico moderato (${et0} mm/g). Irrigare solo quando i primi 3-4 cm di terriccio risultano completamente asciutti al tatto. Non saturare il panetto di terra.`;
+            } else {
+                waterFreq = "Ogni 4-5 giorni (Bassa Frequenza)";
+                waterAdvice = `Metabolismo basale ridotto a causa di basse temperature o bassa radiazione solare (${et0} mm/g). Sospendere le irrigazioni regolari per evitare asfissia radicale e marciumi.`;
             }
 
-            // 3. Vento e Parassiti
-            if (current.wind_speed_10m > 30) advice.push("💨 <strong>Vento:</strong> Raffiche moderate. Proteggi i fusti più sottili.");
-            if (current.relative_humidity_2m < 40 && current.temperature_2m > 25) {
-                advice.push("🕷️ <strong>Rischio Acari:</strong> Caldo secco. Nebulizza acqua sulle foglie alla sera.");
+            reportHTML += `
+                <div class="advice-section">
+                    <div class="advice-title">💧 Piano Irrigazione (Al netto della pioggia)</div>
+                    <p class="advice-text"><strong>Frequenza suggerita:</strong> ${waterFreq}<br>${waterAdvice}</p>
+                </div>
+            `;
+
+            // --- 3. ANALISI AGRONOMICA AVANZATA ---
+            let agroAdvice = [];
+            
+            // Analisi Efficienza Fotosintetica (Luce + UV)
+            if (current.cloud_cover > 80) {
+                agroAdvice.push("Efficienza fotosintetica compromessa oggi a causa dell'elevata copertura nuvolosa. Sconsigliata la concimazione fogliare.");
+            } else if (daily.uv_index_max[0] >= 8) {
+                agroAdvice.push("Indice UV critico. Eccellente per piante adulte lignificate, ma se hai effettuato il trapianto o lo spostamento outdoor da meno di 5 giorni, le piante necessitano di acclimatamento all'ombra per evitare sbiancamento fogliare.");
             }
 
-            if (advice.length === 0) advice.push("✅ Condizioni stabili. Nessuna azione richiesta.");
+            // Analisi Stress Meccanico (Vento)
+            let maxWind = Math.max(...data.hourly.wind_speed_10m.slice(0, 24));
+            if (maxWind > 35) {
+                agroAdvice.push(`Rischio di stress meccanico severo. Raffiche previste fino a ${maxWind} km/h. Verificare la tenuta dei tutori e zavorrare i vasi leggeri.`);
+            }
 
-            adviceBox.innerHTML = "<strong>Statistiche e Consigli:</strong><ul>" + advice.map(a => `<li>${a}</li>`).join('') + "</ul>";
+            // Analisi Fitosanitaria
+            if (current.temperature_2m > 26 && current.relative_humidity_2m < 45) {
+                agroAdvice.push("Allerta Parassiti: Il microclima attuale (caldo-secco) favorisce l'infestazione da Ragnetto Rosso (Tetranychus urticae). Monitorare la pagina inferiore delle foglie.");
+            }
+
+            if (agroAdvice.length === 0) agroAdvice.push("Parametri agronomici stabili. Nessun fattore di stress secondario rilevato nel breve termine.");
+
+            reportHTML += `
+                <div class="advice-section">
+                    <div class="advice-title">🔬 Analisi Fitosanitaria e Ambientale</div>
+                    <ul style="margin:0; padding-left: 20px; line-height: 1.5; color: #333; font-size: 0.95em;">
+                        ${agroAdvice.map(a => `<li>${a}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+
+            adviceBox.innerHTML = reportHTML;
             weatherCard.style.display = 'block';
         }
     </script>
