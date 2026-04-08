@@ -356,18 +356,22 @@
     </div>
     <div class="hero-sub">Meteo agronomico per capsicum · Terrazzo &amp; orto</div>
   </div>
-  <div class="hero-right">
+  <div class="hero-right" id="heroStats" style="display:none;">
     <div class="hero-stat">
-      <div class="hero-stat-val">7gg</div>
-      <div class="hero-stat-label">previsioni</div>
+      <div class="hero-stat-val" id="heroTemp">—</div>
+      <div class="hero-stat-label">temp. ora</div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-val">24h</div>
-      <div class="hero-stat-label">orarie</div>
+      <div class="hero-stat-val" id="heroWind">—</div>
+      <div class="hero-stat-label">vento km/h</div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-val">8+</div>
-      <div class="hero-stat-label">indici agro</div>
+      <div class="hero-stat-val" id="heroUV">—</div>
+      <div class="hero-stat-label">UV max</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-val" id="heroRain">—</div>
+      <div class="hero-stat-label">mm oggi</div>
     </div>
   </div>
 </div>
@@ -633,6 +637,13 @@ function renderUI(locName, lat, lon, elev, data) {
   const now = new Date();
   let hi = h.time.findIndex(t => new Date(t) >= now);
   if (hi < 0) hi = 0;
+
+  // HEADER HERO - dati live
+  document.getElementById('heroTemp').innerText = c.temperature_2m + '°';
+  document.getElementById('heroWind').innerText = c.wind_speed_10m;
+  document.getElementById('heroUV').innerText = d.uv_index_max[0];
+  document.getElementById('heroRain').innerText = d.precipitation_sum[0];
+  document.getElementById('heroStats').style.display = 'flex';
 
   // HEADER
   document.getElementById('locationName').innerText = locName;
@@ -995,6 +1006,71 @@ function renderAgronomy(c, h, d, hi, et0, uv, soilT, hum) {
     <div class="agro-card">
       <div class="agro-card-title"><div class="agro-icon yellow">🚚</div>Gestione Spostamenti</div>
       ${moveHTML}
+    </div>`;
+
+  // --- Analisi Vento 7 Giorni ---
+  const wind7max = d.windspeed_10m_max; // array 7 giorni
+  const windMax7 = Math.max(...wind7max);
+  const windAvg7 = wind7max.reduce((a,b)=>a+b,0) / wind7max.length;
+  const windMax24 = Math.max(...h.wind_speed_10m.slice(hi, hi+24));
+  const windDir24 = c.wind_direction_10m;
+
+  // Giorni con vento problematico
+  const windDaysWarn = wind7max.filter(w => w > 25 && w <= 45).length;
+  const windDaysDanger = wind7max.filter(w => w > 45).length;
+  const giorni = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+
+  // Consigli specifici per vaso/terrazzo
+  let windAdvice = [];
+  if (windMax24 > 50) {
+    windAdvice.push({ col: 'var(--red)', txt: 'Spostare i vasi in posizione riparata o all\'interno — rischio ribaltamento e rottura steli.' });
+  } else if (windMax24 > 30) {
+    windAdvice.push({ col: 'var(--yellow)', txt: 'Vento forte oggi: appesantire i vasi con pietre sul fondo o raggrupparli contro un muro.' });
+  } else if (windMax24 > 15) {
+    windAdvice.push({ col: 'var(--text2)', txt: 'Vento moderato: utile contro la bagnatura fogliare, ma può disidratare. Aumentare l\'irrigazione.' });
+  } else {
+    windAdvice.push({ col: 'var(--green)', txt: 'Vento leggero o assente. Condizioni ideali: la pianta traspira normalmente.' });
+  }
+
+  if (windMax7 > 45) windAdvice.push({ col: 'var(--orange)', txt: `Raffica massima settimanale: ${windMax7} km/h. Controllare i tutori prima del weekend.` });
+
+  // Effetto impollinazione: vento 10-25 km/h favorisce l'impollinazione dei fiori di peperone
+  const windPollin = wind7max.filter(w => w >= 10 && w <= 25).length;
+  if (windPollin >= 3) windAdvice.push({ col: 'var(--green)', txt: `${windPollin} giorni con vento ottimale (10–25 km/h): favorisce l'impollinazione naturale dei fiori.` });
+  else if (windPollin <= 1 && windAvg7 < 8) windAdvice.push({ col: 'var(--text3)', txt: 'Settimana con poco vento: agitare delicatamente i rami a fioritura avanzata per favorire l\'impollinazione.' });
+
+  // Effetto essiccazione: vento > 20 km/h aumenta ET
+  if (windAvg7 > 20) windAdvice.push({ col: 'var(--yellow)', txt: `Vento costante (media ${windAvg7.toFixed(0)} km/h): l\'evapotraspirazione reale è più alta dell\'ET₀ calcolata. Irrigare con anticipo.` });
+
+  // Barre 7 giorni
+  const wBarMax = Math.max(windMax7, 1);
+  const today = new Date();
+  const windBars = wind7max.map((w, i) => {
+    const dayName = i === 0 ? 'Oggi' : giorni[new Date(d.time[i] + 'T12:00:00').getDay()];
+    const pct = (w / wBarMax * 100).toFixed(0);
+    const col = w > 45 ? 'var(--red)' : w > 25 ? 'var(--yellow)' : w > 10 ? 'var(--green)' : 'rgba(255,255,255,0.2)';
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+      <div style="font-size:10px;color:var(--text3);">${w}</div>
+      <div style="width:100%;height:50px;background:rgba(255,255,255,0.06);border-radius:3px;display:flex;align-items:flex-end;">
+        <div style="width:100%;height:${pct}%;background:${col};border-radius:3px;transition:height 0.5s;min-height:2px;"></div>
+      </div>
+      <div style="font-size:9px;color:var(--text3);">${dayName}</div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML += `
+    <div class="agro-card" style="grid-column: span 2;">
+      <div class="agro-card-title"><div class="agro-icon" style="background:rgba(79,195,247,0.15)">💨</div>Vento — Analisi 7 Giorni</div>
+      <div style="display:flex;gap:6px;align-items:flex-end;margin-bottom:14px;">${windBars}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:8px;height:8px;background:var(--green);border-radius:2px;"></span>10–25 km/h: impollinazione ottimale</div>
+        <div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:8px;height:8px;background:var(--yellow);border-radius:2px;"></span>&gt;25 km/h: stress meccanico</div>
+        <div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:8px;height:8px;background:var(--red);border-radius:2px;"></span>&gt;45 km/h: pericolo rottura</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        ${windAdvice.map(a => `<div style="font-size:12px;color:${a.col};line-height:1.5;padding-left:8px;border-left:2px solid ${a.col};">${a.txt}</div>`).join('')}
+      </div>
+      <div style="font-size:10px;color:var(--text3);border-top:1px solid rgba(255,255,255,0.07);padding-top:7px;margin-top:10px;">Max 7gg: ${windMax7} km/h · Media: ${windAvg7.toFixed(0)} km/h · Direzione attuale: ${windDirName(windDir24)} (${windDir24}°)</div>
     </div>`;
 
   // --- Radiazione / Fotosintesi ---
