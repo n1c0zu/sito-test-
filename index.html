@@ -358,6 +358,7 @@
     <input type="text" class="search-input" id="cityInput" placeholder="Cerca una città..." autocomplete="off">
     <div id="suggestionsBox" class="suggestions"></div>
   </div>
+  <button class="btn" id="searchBtn">🔍 Cerca</button>
   <button class="btn btn-loc" onclick="useGPS()">📍 Rileva posizione</button>
 </div>
 
@@ -496,27 +497,63 @@ function getDayName(dateStr, isToday) {
 // =====================
 // SEARCH AUTOCOMPLETE
 // =====================
+let lastResults = [];
+
+async function doSearch(q) {
+  if (q.length < 2) { suggestionsBox.style.display = 'none'; return; }
+  try {
+    const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=it&format=json`);
+    const data = await r.json();
+    if (!data.results || data.results.length === 0) { suggestionsBox.innerHTML = '<div class="suggestion-item" style="color:var(--text3)">Nessun risultato trovato</div>'; suggestionsBox.style.display = 'block'; return; }
+    lastResults = data.results;
+    suggestionsBox.innerHTML = data.results.map((c, i) => `
+      <div class="suggestion-item" data-idx="${i}">
+        <div>${c.name}</div>
+        <div class="suggestion-sub">${[c.admin1, c.country].filter(Boolean).join(', ')}</div>
+      </div>`).join('');
+    suggestionsBox.querySelectorAll('.suggestion-item[data-idx]').forEach(el => {
+      el.addEventListener('mousedown', e => {
+        e.preventDefault();
+        const city = lastResults[+el.dataset.idx];
+        selectCity(city.latitude, city.longitude, city.name, city.elevation || 0);
+      });
+    });
+    suggestionsBox.style.display = 'block';
+  } catch(e) { suggestionsBox.style.display = 'none'; }
+}
+
 cityInput.addEventListener('input', e => {
   clearTimeout(debounceTimer);
   const q = e.target.value.trim();
   if (q.length < 2) { suggestionsBox.style.display = 'none'; return; }
-  debounceTimer = setTimeout(async () => {
-    try {
-      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=it&format=json`);
-      const d = await r.json();
-      if (!d.results) { suggestionsBox.style.display = 'none'; return; }
-      suggestionsBox.innerHTML = d.results.map(c => `
-        <div class="suggestion-item" onclick="selectCity(${c.latitude},${c.longitude},'${c.name.replace(/'/g,'\\'')}',${c.elevation||0})">
-          <div>${c.name}</div>
-          <div class="suggestion-sub">${[c.admin1, c.country].filter(Boolean).join(', ')}</div>
-        </div>`).join('');
-      suggestionsBox.style.display = 'block';
-    } catch(e) {}
-  }, 300);
+  debounceTimer = setTimeout(() => doSearch(q), 300);
 });
 
-document.addEventListener('click', e => {
-  if (!e.target.closest('.search-wrap')) suggestionsBox.style.display = 'none';
+cityInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (lastResults.length > 0) {
+      const city = lastResults[0];
+      selectCity(city.latitude, city.longitude, city.name, city.elevation || 0);
+    } else {
+      doSearch(cityInput.value.trim());
+    }
+  }
+});
+
+document.getElementById('searchBtn').addEventListener('click', () => {
+  const q = cityInput.value.trim();
+  if (!q) return;
+  if (lastResults.length > 0) {
+    const city = lastResults[0];
+    selectCity(city.latitude, city.longitude, city.name, city.elevation || 0);
+  } else {
+    doSearch(q);
+  }
+});
+
+cityInput.addEventListener('blur', () => {
+  setTimeout(() => { suggestionsBox.style.display = 'none'; }, 150);
 });
 
 function selectCity(lat, lon, name, elev) {
