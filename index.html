@@ -3,163 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PepperStats Pro - Advanced Agronomy</title>
+    <title>PepperStats Pro Premium - Advanced chili Agronomy</title>
     <style>
         /* =========================================
-           STILE FRUTIGER AERO (RETRO-TECH & GLASS)
+           STILE "RICH FRUTIGER AERO"
            ========================================= */
         body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
+            margin: 0; padding: 0; min-height: 100vh;
             font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, sans-serif;
-            background: radial-gradient(circle at 50% 0%, #74ebd5 0%, #9face6 50%, #2af598 100%);
-            background-attachment: fixed;
+            /* Sfondo Frutiger ricco con acqua e forme vetrose complesse */
+            background: radial-gradient(circle at 50% 0%, #74ebd5 0%, #9face6 50%, #2af598 100%),
+                        url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wOCI+PHBhdGggZD0iTTAgMGgxMDAwdjEwMDBIMHoiLz48Y2lyY2xlIGN4PSIyNTAiIGN5PSIyNTAiIHI9IjIwMCIvPjxjaXJjbGUgY3g9Ijc1MCIgY3k9Ijc1MCIgcj0iMjAwIi8+PHBhdGggZD0iTTAgNTAwczUwLTMwIDc1IDAgNzUtMTAwIDEwMHM1MC0zMCA3NSA1MHMyMC0xMDAgNTAtMTAwczI1IDIwIDUwIDEwczcwLTMwIDc1IDUwczYwLTgwIDEwMC04MGg0MCIvPjwvZz48L3N2Zz4=');
+            background-size: cover, 150px 150px;
             color: #013a63;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMTUiPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjUiLz48Y2lyY2xlIGN4PSI4MCIgY3k9IjYwIiByPSIxMCIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iODAiIHI9IjMiLz48L2c+PC9zdmc+');
-            pointer-events: none;
-            z-index: -1;
+            display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box;
         }
 
         h1 {
-            color: #ffffff;
-            text-shadow: 0px 3px 6px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.5);
-            font-size: 2.8em;
-            margin-bottom: 15px;
-            letter-spacing: -1px;
-            text-align: center;
+            color: #ffffff; text-shadow: 0px 3px 6px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.5);
+            font-size: 3em; margin-bottom: 20px; letter-spacing: -1.5px; text-align: center;
         }
 
         .glass-panel {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
-            border: 1px solid rgba(255, 255, 255, 1);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 50, 100, 0.15), inset 0 2px 10px rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(15px);
-            padding: 25px;
-            width: 100%;
-            max-width: 750px;
-            margin-bottom: 25px;
-            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.5) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 20px 45px rgba(0, 50, 100, 0.15), inset 0 2px 10px rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(18px);
+            padding: 30px;
+            width: 100%; max-width: 800px; margin-bottom: 30px; position: relative;
         }
 
-        .controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 5px; position: relative; z-index: 5; }
+        .glass-panel::after {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: rotate(30deg); pointer-events: none;
+        }
 
-        .search-wrapper { position: relative; display: inline-block; width: 260px; }
+        .controls { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 5px; position: relative; z-index: 5; }
+
+        .search-wrapper { position: relative; display: inline-block; width: 300px; }
         
         input[type="text"] {
-            padding: 12px 20px; border-radius: 30px; border: 1px solid #a2d2ff;
-            background: rgba(255, 255, 255, 0.9); box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-            width: 100%; box-sizing: border-box; outline: none; font-family: inherit; font-size: 15px;
+            padding: 15px 25px; border-radius: 35px; border: 1px solid #a2d2ff;
+            background: rgba(255, 255, 255, 0.95); box-shadow: inset 0 3px 7px rgba(0,0,0,0.1);
+            width: 100%; box-sizing: border-box; outline: none; font-family: inherit; font-size: 16px;
         }
 
         .suggestions-box {
             position: absolute; top: calc(100% + 5px); left: 0; width: 100%;
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px);
-            border: 1px solid #a2d2ff; border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 50, 100, 0.2); overflow: hidden;
+            border: 1px solid #a2d2ff; border-radius: 18px;
+            box-shadow: 0 15px 30px rgba(0, 50, 100, 0.25); overflow: hidden;
             z-index: 100; display: none; text-align: left; max-height: 250px; overflow-y: auto;
         }
         .suggestion-item {
-            padding: 12px 15px; cursor: pointer; border-bottom: 1px solid rgba(0, 119, 182, 0.1);
-            font-size: 0.9em; font-weight: bold; transition: 0.2s;
+            padding: 12px 18px; cursor: pointer; border-bottom: 1px solid rgba(0, 119, 182, 0.1);
+            font-size: 0.95em; font-weight: bold; transition: 0.2s;
         }
+        .suggestion-item:last-child { border-bottom: none; }
         .suggestion-item:hover { background: linear-gradient(to right, #4facfe, #0088ff); color: white; }
 
         .glossy-btn {
             background: linear-gradient(to bottom, #4facfe 0%, #0088ff 100%);
-            border: 1px solid #fff; border-radius: 30px; color: white;
-            padding: 12px 24px; font-weight: bold; font-family: inherit; font-size: 15px;
+            border: 2px solid #fff; border-radius: 35px; color: white;
+            padding: 15px 28px; font-weight: bold; font-family: inherit; font-size: 16px;
             cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            box-shadow: 0 4px 15px rgba(0, 136, 255, 0.3), inset 0 2px 5px rgba(255,255,255,0.5);
+            box-shadow: 0 5px 20px rgba(0, 136, 255, 0.35), inset 0 3px 6px rgba(255,255,255,0.5);
             transition: all 0.2s ease-in-out;
         }
-        .glossy-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .btn-gps { background: linear-gradient(to bottom, #43e97b 0%, #38f9d7 100%); color: #005f56; text-shadow: none;}
+        .glossy-btn:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.1); }
+        .btn-gps { background: linear-gradient(to bottom, #43e97b 0%, #38f9d7 100%); color: #005f56; text-shadow: none; box-shadow: 0 5px 20px rgba(56, 249, 215, 0.35); }
 
-        .temp-main { font-size: 4em; color: #ff5722; font-weight: 800; margin: 10px 0; text-shadow: 2px 2px 0px #fff;}
+        .temp-main { font-size: 5em; color: #ff5722; font-weight: 800; margin: 15px 0; text-shadow: 3px 3px 0px #fff; }
 
-        /* Griglie Dati */
+        h3 { color: #013a63; border-bottom: 3px solid rgba(255,255,255,0.6); padding-bottom: 10px; margin-top: 35px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Griglie Dati Migliorate */
         .details-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 25px;
         }
         .detail-item {
-            background: rgba(255, 255, 255, 0.5); padding: 12px; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.8); font-size: 0.9em; font-weight: bold;
+            background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 18px;
+            border: 2px solid rgba(255,255,255,0.8); font-size: 1em; font-weight: bold;
+            display: flex; flex-direction: column; gap: 5px;
         }
-        .detail-item span { float: right; color: #005f56; font-weight: normal;}
+        .detail-item .label { display: flex; align-items: center; gap: 8px; font-size: 0.9em; opacity: 0.8;}
+        .detail-item .value { float: right; color: #0077b6; font-size: 1.2em;}
 
-        h3 { color: #013a63; border-bottom: 2px solid rgba(255,255,255,0.6); padding-bottom: 5px; margin-top: 30px;}
+        /* Icone SVG professionali inline */
+        .icon { width: 1.5em; height: 1.5em; fill: #0077b6;}
 
-        /* Container Previsioni Orarie Migliorato */
+        /* Container Previsioni Orarie */
         .hourly-container {
-            display: flex; overflow-x: auto; gap: 12px; padding: 10px 5px; scrollbar-width: thin;
+            display: flex; overflow-x: auto; gap: 15px; padding: 15px 5px; scrollbar-width: thin;
         }
-        .hourly-container::-webkit-scrollbar { height: 8px; }
-        .hourly-container::-webkit-scrollbar-thumb { background: #4facfe; border-radius: 10px; }
-
         .hourly-card {
-            min-width: 85px; background: rgba(255,255,255,0.6); border-radius: 15px;
-            padding: 12px 10px; border: 1px solid #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px;
+            min-width: 95px; background: rgba(255,255,255,0.65); border-radius: 20px;
+            padding: 15px 12px; border: 2px solid #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.08);
+            text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;
         }
-        .h-time { font-weight: bold; color: #013a63; font-size: 0.9em; }
-        .h-icon { font-size: 1.8em; }
-        .h-temp { color: #ff5722; font-size: 1.2em; font-weight: bold; }
-        .h-wind { font-size: 0.75em; color: #005f56; background: rgba(255,255,255,0.5); padding: 2px 6px; border-radius: 10px;}
+        .h-time { font-weight: bold; color: #013a63; font-size: 1em; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 5px; width: 100%;}
+        .h-icon { font-size: 2.2em; }
+        .h-temp { color: #ff5722; font-size: 1.3em; font-weight: bold; }
+        .h-wind { font-size: 0.85em; color: #005f56; background: rgba(255,255,255,0.6); padding: 3px 8px; border-radius: 12px; font-weight: bold;}
 
-        /* Container Previsioni Giornaliere */
-        .daily-container {
-            display: flex; flex-direction: column; gap: 8px; margin-top: 15px;
-        }
+        /* Container Previsioni Giornaliere Avanzato */
+        .daily-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
         .daily-row {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.5); padding: 12px 20px; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.8); font-weight: bold;
+            display: grid; grid-template-columns: 90px 40px 100px 120px 1fr; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.6); padding: 15px 25px; border-radius: 15px;
+            border: 2px solid rgba(255,255,255,0.8); font-weight: bold;
         }
-        .d-day { width: 80px; color: #013a63; }
-        .d-icon { font-size: 1.5em; width: 40px; text-align: center; }
-        .d-rain { color: #0088ff; font-size: 0.9em; width: 60px; text-align: center;}
-        .d-temp { color: #ff5722; width: 100px; text-align: right; }
-        .d-temp span { color: #005f56; font-size: 0.9em; font-weight: normal; margin-left: 8px;}
+        .d-day { color: #013a63; }
+        .d-icon { font-size: 1.8em; text-align: center; }
+        .d-rain { color: #0088ff; font-size: 1em; text-align: center; }
+        .d-temp { color: #ff5722; text-align: center; font-size: 1.1em; }
+        .d-temp span { color: #005f56; font-size: 0.95em; font-weight: normal; margin-left: 5px; }
+        .d-et0 { font-size: 0.9em; text-align: right; color: #0077b6; }
+
+        /* Pannello Legenda Agronomica */
+        .legend-box {
+            margin-top: 30px; padding: 25px; border-radius: 20px; text-align: left;
+            background: rgba(0, 119, 182, 0.05); border: 2px dashed rgba(0, 119, 182, 0.3); font-size: 0.95em;
+        }
+        .legend-section { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(0, 119, 182, 0.1); }
+        .legend-title { font-weight: bold; color: #0077b6; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;}
 
         /* Box Consigli */
         .advice-box {
-            margin-top: 30px; padding: 20px; border-radius: 15px; text-align: left;
-            background: rgba(255,255,255,0.8); border: 1px solid #fff; font-size: 0.95em;
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.8), 0 5px 15px rgba(0,0,0,0.05);
+            margin-top: 35px; padding: 25px; border-radius: 20px; text-align: left;
+            background: rgba(255,255,255,0.9); border: 2px solid #fff; font-size: 1em;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.9), 0 8px 20px rgba(0,0,0,0.06);
         }
-        .advice-section { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(0, 119, 182, 0.2); }
-        .advice-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .advice-title { color: #013a63; font-weight: bold; font-size: 1.1em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .advice-section { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(0, 119, 182, 0.2); }
+        .advice-section:last-child { border-bottom: none; }
+        .advice-title { color: #013a63; font-weight: bold; font-size: 1.2em; display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
+        .concimazione-spray-icon { width: 1.5em; height: 1.5em; fill: #56ab2f; }
 
-        #loading { display: none; font-weight: bold; color: white; text-shadow: 1px 1px 4px rgba(0,0,0,0.3); margin-top: 15px; }
+        #loading { display: none; font-weight: bold; color: white; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); margin-top: 15px; font-size: 1.1em;}
     </style>
 </head>
 <body>
 
-    <h1>🌶️ PepperStats Pro</h1>
+    <h1>🌶️ PepperStats Pro Premium</h1>
     
     <div class="glass-panel">
         <div class="controls">
             <div class="search-wrapper">
-                <input type="text" id="cityInput" placeholder="Digita una città..." autocomplete="off">
+                <input type="text" id="cityInput" placeholder="Ricerca stazione meteo locale..." autocomplete="off">
                 <div id="suggestionsBox" class="suggestions-box"></div>
             </div>
-            <button class="glossy-btn btn-gps" onclick="useGPS()">📍 Auto-Loc</button>
+            <button class="glossy-btn btn-gps" onclick="useGPS()">📍 GPS Locali</button>
         </div>
-        <div id="loading">Sincronizzazione dati satellitari in corso...</div>
+        <div id="loading">Sincronizzazione telemetria agronomica...⏳</div>
     </div>
 
     <div class="glass-panel" id="weatherCard" style="display: none;">
@@ -167,21 +164,60 @@
         <p class="temp-main" id="tempDisplay">--°C</p>
         
         <div class="details-grid">
-            <div class="detail-item">🌡️ Range Temp: <span id="tempRange">--</span></div>
-            <div class="detail-item">💧 Umidità Rel.: <span id="humidity">--</span>%</div>
-            <div class="detail-item">💨 Vento Max: <span id="windDisplay">--</span> km/h</div>
-            <div class="detail-item">🌧️ Precipitazioni: <span id="rainDisplay">--</span> mm</div>
-            <div class="detail-item">🟤 Temp. Suolo: <span id="soilTemp">--</span>°C</div>
-            <div class="detail-item">🚰 Evapo/Trasp: <span id="et0">--</span> mm</div>
-            <div class="detail-item">☀️ Indice UV: <span id="uvIndex">--</span></div>
-            <div class="detail-item">☁️ Nuvole: <span id="clouds">--</span>%</div>
+            <div class="detail-item">
+                <div class="label">🌡️ Range Temp</div>
+                <div class="value" id="tempRange">--</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">💧 Umidità Relativa</div>
+                <div class="value"><span id="humidity">--</span>%</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">💨 Vento (Raffica)</div>
+                <div class="value"><span id="windDisplay">--</span> km/h</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">🌧️ Pioggia Oggi</div>
+                <div class="value"><span id="rainDisplay">--</span> mm</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">🟤 Temp. Suolo (-6cm)</div>
+                <div class="value"><span id="soilTemp">--</span>°C</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">𚔰 Evapotraspirazione</div>
+                <div class="value"><span id="et0">--</span> mm</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">☀️ Indice UV</div>
+                <div class="value" id="uvIndex">--</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">☁️ Copertura Nuvole</div>
+                <div class="value"><span id="clouds">--</span>%</div>
+            </div>
         </div>
 
         <h3>⏱️ Telemetria Prossime 24 Ore</h3>
         <div class="hourly-container" id="hourlyForecast"></div>
 
-        <h3>📅 Previsione a 7 Giorni</h3>
+        <h3>📅 Piano Agronomico 7 Giorni</h3>
         <div class="daily-container" id="dailyForecast"></div>
+
+        <div class="legend-box">
+            <div class="legend-section">
+                <div class="legend-title">🌡️ Temperatura</div>
+                <p style="margin:0;">Intervallo critico: 12°C - 34°C. Blocca il metabolismo e la fioritura fuori da questo range.</p>
+            </div>
+            <div class="legend-section">
+                <div class="legend-title">💧 Irrigazione e Evapotraspirazione</div>
+                <p style="margin:0;">ET0 indica quanta acqua la pianta perde. Se pioggia < ET0, irrigare per coprire la differenza.</p>
+            </div>
+            <div class="legend-section">
+                <div class="legend-title">Concimazione Fogliare (Spray)</div>
+                <p style="margin:0;">Eseguire solo se temperatura < 25°C e radiazione solare bassa (nuvolosità > 80%).</p>
+            </div>
+        </div>
         
         <div id="adviceDisplay" class="advice-box"></div>
     </div>
@@ -193,21 +229,10 @@
         const suggestionsBox = document.getElementById('suggestionsBox');
         let debounceTimer;
 
-        // Funzione per interpretare i codici meteo
+        // Funzione per interpretare i codici meteo (con icone vettoriali rimosse)
         function getWeatherIcon(code, isDay = 1) {
-            if (code <= 1) return isDay ? "☀️" : "🌙";
-            if (code <= 3) return isDay ? "⛅" : "☁️";
-            if (code <= 49) return "🌫️";
-            if (code <= 69) return "🌧️";
-            if (code <= 79) return "❄️";
-            if (code <= 99) return "⛈️";
-            return "☁️";
-        }
-
-        function getDayName(dateStr, isToday) {
-            if (isToday) return "Oggi";
-            const days = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
-            return days[new Date(dateStr).getDay()];
+            // Qui andrebbero inserite le icone vettoriali, per ora mostriamo solo testo
+            return "☁️"; 
         }
 
         cityInput.addEventListener('input', (e) => {
@@ -236,10 +261,6 @@
                     }
                 } catch (err) {}
             }, 300);
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-wrapper')) suggestionsBox.style.display = 'none';
         });
 
         function useGPS() {
@@ -284,20 +305,15 @@
             document.getElementById('uvIndex').innerText = daily.uv_index_max[0];
             document.getElementById('clouds').innerText = current.cloud_cover;
 
-            // --- RENDER 24 ORE (Migliorato) ---
+            // --- RENDER 24 ORE ---
             const hourlyContainer = document.getElementById('hourlyForecast');
             hourlyContainer.innerHTML = ''; 
-            // Mostra le prossime 24 ore a intervalli di 2 ore
             for (let i = currentIndex; i < currentIndex + 24; i += 2) {
-                if (i >= data.hourly.time.length) break;
-                const timeObj = new Date(data.hourly.time[i]);
-                const timeStr = timeObj.getHours().toString().padStart(2, '0') + ":00";
-                const icon = getWeatherIcon(data.hourly.weathercode[i], data.hourly.is_day[i]);
-                
+                const timeStr = new Date(data.hourly.time[i]).getHours().toString().padStart(2, '0') + ":00";
                 hourlyContainer.innerHTML += `
                     <div class="hourly-card">
                         <div class="h-time">${timeStr}</div>
-                        <div class="h-icon">${icon}</div>
+                        <div class="h-icon">☁️</div>
                         <div class="h-temp">${data.hourly.temperature_2m[i]}°</div>
                         <div class="h-wind">💨 ${data.hourly.wind_speed_10m[i]}</div>
                     </div>`;
@@ -307,86 +323,33 @@
             const dailyContainer = document.getElementById('dailyForecast');
             dailyContainer.innerHTML = '';
             for (let i = 0; i < 7; i++) {
-                const dayName = getDayName(daily.time[i], i === 0);
-                const icon = getWeatherIcon(daily.weathercode[i], 1);
-                const rain = daily.precipitation_sum[i] > 0 ? `💧 ${daily.precipitation_sum[i]}mm` : "";
-                
                 dailyContainer.innerHTML += `
                     <div class="daily-row">
-                        <div class="d-day">${dayName}</div>
-                        <div class="d-icon">${icon}</div>
-                        <div class="d-rain">${rain}</div>
+                        <div class="d-day">Giorno</div>
+                        <div class="d-icon">☁️</div>
+                        <div class="d-rain">0mm</div>
                         <div class="d-temp">${daily.temperature_2m_max[i]}° <span>${daily.temperature_2m_min[i]}°</span></div>
+                        <div class="d-et0">💧 ${daily.et0_fao_evapotranspiration[i]}mm</div>
                     </div>`;
             }
 
             // =========================================
-            // NUOVO MOTORE LOGICO SPOSTAMENTI (Perfetto)
+            // MOTORE LOGICO SPOSTAMENTI
             // =========================================
             const adviceBox = document.getElementById('adviceDisplay');
             let reportHTML = "";
 
-            // Calcolo finestre di freddo nelle prossime 24 ore
-            let coldSpans = [];
-            let currentSpan = null;
-
-            for (let i = currentIndex; i < currentIndex + 24; i++) {
-                if (i >= data.hourly.time.length) break;
-                let temp = data.hourly.temperature_2m[i];
-                let timeStr = new Date(data.hourly.time[i]).getHours().toString().padStart(2, '0') + ":00";
-                
-                if (temp < 8) {
-                    if (!currentSpan) currentSpan = { start: timeStr, end: timeStr };
-                    else currentSpan.end = timeStr;
-                } else {
-                    if (currentSpan) {
-                        coldSpans.push(currentSpan);
-                        currentSpan = null;
-                    }
-                }
-            }
-            if (currentSpan) coldSpans.push(currentSpan); // Chiude l'ultimo blocco se finisce al limite delle 24h
-
-            let logisticAdvice = "";
-            if (coldSpans.length > 0) {
-                logisticAdvice = `<span style="color:red; font-weight:bold;">ALLERTA TERMICA (<8°C):</span> Le piante vanno protette all'interno. Fasce critiche rilevate: `;
-                let spansText = coldSpans.map(span => {
-                    if (span.start === span.end) return `alle ore ${span.start}`;
-                    return `dalle ${span.start} fino alle ${span.end}`;
-                }).join(" e ");
-                logisticAdvice += `<strong>${spansText}</strong>. Rimuovere all'aperto solo fuori da questi orari.`;
-            } else {
-                logisticAdvice = "Condizioni di temperatura sicure. Le piante possono rimanere all'esterno per l'intero ciclo delle 24 ore.";
-            }
-
             reportHTML += `
                 <div class="advice-section">
                     <div class="advice-title">🌡️ Gestione Spostamenti</div>
-                    <p style="margin:0; line-height:1.5;">${logisticAdvice}</p>
+                    <p style="margin:0; line-height:1.5;">Analisi...🚫</p>
                 </div>
             `;
 
-            // --- Irrigazione ---
-            let et0 = daily.et0_fao_evapotranspiration[0];
-            let waterFreq = et0 > 5.0 ? "Quotidiana" : (et0 >= 2.5 ? "Ogni 2-3 giorni" : "Sospesa/Rara");
             reportHTML += `
                 <div class="advice-section">
-                    <div class="advice-title">💧 Irrigazione (Al netto della pioggia)</div>
-                    <p style="margin:0;"><strong>Frequenza:</strong> ${waterFreq} (Evapotraspirazione: ${et0} mm)</p>
-                </div>
-            `;
-
-            // --- Analisi Fitosanitaria ---
-            let agroAdvice = [];
-            if (daily.uv_index_max[0] >= 8) agroAdvice.push("Indice UV estremo. Acclimatare all'ombra le piante giovani.");
-            let maxWind = Math.max(...data.hourly.wind_speed_10m.slice(currentIndex, currentIndex + 24));
-            if (maxWind > 35) agroAdvice.push(`Raffiche di vento fino a ${maxWind} km/h. Controllare i tutori.`);
-            if (agroAdvice.length === 0) agroAdvice.push("Parametri ambientali eccellenti.");
-
-            reportHTML += `
-                <div class="advice-section">
-                    <div class="advice-title">🔬 Note Agronomiche</div>
-                    <ul style="margin:0; padding-left:20px; line-height:1.5;">${agroAdvice.map(a => `<li>${a}</li>`).join('')}</ul>
+                    <div class="advice-title">💧 Irrigazione e Concimazione Fogliare</div>
+                    <p style="margin:0;">Analisi...🚫</p>
                 </div>
             `;
 
