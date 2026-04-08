@@ -6,14 +6,17 @@
     <title>PepperWeather Pro - Frutiger Aero</title>
     <style>
         /* =========================================
-           STILE FRUTIGER AERO
+           STILE FRUTIGER AERO - AGGIORNATO
            ========================================= */
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 40%, #e0f6ff 60%, #96e6a1 100%);
+            /* Sfondo ricco con gradienti azzurro-verde e pattern di onde/bolle */
+            background: linear-gradient(135deg, #4facfe, #00f2fe 40%, #e0f6ff 60%, #96e6a1), 
+                        url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9Ii4xIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyMCIvPjwvZz48L3N2Zz4=');
+            background-size: cover, 100px 100px;
             color: #024b7a;
             display: flex;
             flex-direction: column;
@@ -30,16 +33,16 @@
             text-align: center;
         }
 
-        /* Pannelli di vetro */
+        /* Pannelli di vetro più traslucidi */
         .glass-panel {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.9);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 100, 200, 0.2), inset 0 2px 5px rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 100, 200, 0.2), inset 0 2px 5px rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
             padding: 20px;
             width: 100%;
-            max-width: 600px; /* Allargato per contenere più dati */
+            max-width: 600px;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -54,7 +57,7 @@
             outline: none;
         }
 
-        /* Pulsanti lucidi */
+        /* Pulsanti lucidi e colorati */
         .glossy-btn {
             background: linear-gradient(to bottom, #a0d8ef 0%, #4682b4 100%);
             border: 1px solid #ffffff;
@@ -84,14 +87,14 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.3);
             border-radius: 15px;
             padding: 15px;
             margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.6);
         }
         .detail-item { font-size: 0.95em; font-weight: bold; }
-        .detail-item span { color: #d32f2f; font-weight: normal; } /* Rosso scuro per i valori */
+        .detail-item span { color: #d32f2f; font-weight: normal; }
 
         /* Box Orario (Scroll Orizzontale) */
         h3 { margin: 5px 0 15px 0; color: #01579b; }
@@ -102,14 +105,14 @@
             padding: 10px 5px 20px 5px;
         }
         
-        /* Scrollbar stile Frutiger Aero */
+        /* Scrollbar stile vetro/acqua */
         .hourly-container::-webkit-scrollbar { height: 10px; }
-        .hourly-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+        .hourly-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
         .hourly-container::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #8fc3ea, #4682b4); border-radius: 10px; border: 1px solid white;}
 
         .hourly-card {
             min-width: 80px;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.5);
             border: 1px solid white;
             border-radius: 15px;
             padding: 10px;
@@ -125,7 +128,7 @@
         .h-rain { color: #009688; font-size: 0.8em; }
         .h-wind { color: #0288d1; font-size: 0.8em; }
 
-        /* Box Consigli */
+        /* Box Consigli professionali */
         .advice-box {
             margin-top: 20px;
             padding: 15px;
@@ -133,9 +136,9 @@
             font-size: 1.05em;
             line-height: 1.4;
             font-weight: bold;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.4);
             border: 1px solid white;
-            box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.4);
         }
 
         .alert-danger { background: rgba(255, 100, 100, 0.3); border-color: #ff4444; color: #900;}
@@ -219,7 +222,6 @@
 
         async function fetchWeather(lat, lon, locationName) {
             try {
-                // API Estesa con Corrente, Orario (prossime 24h) e Giornaliero (min/max)
                 const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&hourly=temperature_2m,precipitation_probability,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto&forecast_days=2`;
                 const res = await fetch(url);
                 const data = await res.json();
@@ -232,7 +234,6 @@
         }
 
         function updateUI(locationName, data) {
-            // Dati Attuali
             const current = data.current;
             const daily = data.daily;
             
@@ -242,22 +243,19 @@
             document.getElementById('windDisplay').innerText = current.wind_speed_10m;
             document.getElementById('rainDisplay').innerText = current.precipitation;
             
-            // Dati Giornalieri (Indice 0 = Oggi)
             document.getElementById('maxTemp').innerText = daily.temperature_2m_max[0];
             document.getElementById('minTemp').innerText = daily.temperature_2m_min[0];
             document.getElementById('uvIndex').innerText = daily.uv_index_max[0] || "--";
 
-            // Previsioni Orarie (costruiamo i blocchetti)
             const hourlyContainer = document.getElementById('hourlyForecast');
-            hourlyContainer.innerHTML = ''; // pulisci precedenti
+            hourlyContainer.innerHTML = ''; 
             
-            // Troviamo l'ora attuale per mostrare le prossime 24 ore
             const now = new Date();
             let currentIndex = data.hourly.time.findIndex(timeStr => new Date(timeStr) >= now);
-            if(currentIndex === -1) currentIndex = 0; // fallback
+            if(currentIndex === -1) currentIndex = 0; 
 
             for (let i = currentIndex; i < currentIndex + 24; i++) {
-                if(i >= data.hourly.time.length) break; // Evita errori se finiscono i dati
+                if(i >= data.hourly.time.length) break; 
                 
                 const timeObj = new Date(data.hourly.time[i]);
                 const hourStr = timeObj.getHours().toString().padStart(2, '0') + ":00";
@@ -277,12 +275,12 @@
             }
 
             // =========================================
-            // LOGICA AVANZATA PEPERONCINI
+            // LOGICA AVANZATA PEPERONCINI - AGGIORNATA
             // =========================================
             const adviceBox = document.getElementById('adviceDisplay');
             adviceBox.className = 'advice-box'; 
             let adviceHTML = "";
-            let status = "success"; // default
+            let status = "success"; 
 
             const temp = current.temperature_2m;
             const minTemp = daily.temperature_2m_min[0];
@@ -292,33 +290,33 @@
             
             // 1. Allarmi Critici (Rosso)
             if (minTemp < 10) {
-                adviceHTML += "<p>🥶 <strong>RISCHIO NOTTURNO:</strong> La minima scenderà a " + minTemp + "°C. <strong>Tieni le piante dentro</strong> o usa tessuto non tessuto. Rischio di blocco della crescita o morte per le piantine giovani.</p>";
+                adviceHTML += "<p>🥶 **Minima notturna bassa:** La minima scenderà a " + minTemp + "°C. Rischio di blocco della crescita. Sposta le piante al riparo.</p>";
                 status = "danger";
             }
             if (current.wind_speed_10m > 35) {
-                adviceHTML += "<p>💨 <strong>VENTO PERICOLOSO:</strong> Vento a " + current.wind_speed_10m + " km/h! Assicura i fusti ai tutori o sposta i vasi al riparo per evitare rami spezzati.</p>";
+                adviceHTML += "<p>💨 **Vento forte previsto:** Velocità di " + current.wind_speed_10m + " km/h. Proteggi o ancora i fusti.</p>";
                 status = "danger";
             }
 
             // 2. Avvisi (Arancione)
             if (status !== "danger") {
                 if (maxTemp > 34) {
-                    adviceHTML += "<p>☀️ <strong>MOLTO CALDO:</strong> Massima di " + maxTemp + "°C. C'è rischio che i fiori cadano (cascola). Ombreggia le piante nelle ore centrali.</p>";
+                    adviceHTML += "<p>☀️ **Massima alta:** " + maxTemp + "°C prevista. Rischio di caduta dei fiori. Ombreggia se necessario.</p>";
                     status = "warning";
                 }
                 if (hum > 80 && current.precipitation > 0) {
-                    adviceHTML += "<p>🍄 <strong>ALLARME FUNGHI:</strong> Umidità altissima (" + hum + "%) e pioggia. Non bagnare le foglie e assicurati che i vasi drenino perfettamente.</p>";
+                    adviceHTML += "<p>🍄 **Umidità elevata:** " + hum + "% e pioggia. Rischio di malattie fungine. Evita ristagni idrici.</p>";
                     status = "warning";
                 }
                 if (uv > 8) {
-                    adviceHTML += "<p>🕶️ <strong>SOLE COCENTE:</strong> UV Index molto alto. Ottimo per le piante adulte, ma se le tue piantine sono uscite di casa da poco, mettile un po' all'ombra o si scotteranno le foglie!</p>";
+                    adviceHTML += "<p>🕶️ **UV alto previsto:** Indice UV di " + uv + ". Proteggi le piantine giovani per evitare scottature fogliari.</p>";
                     status = "warning";
                 }
             }
 
             // 3. Situazione Ideale (Verde)
             if (adviceHTML === "") {
-                adviceHTML = "<p>✅ <strong>GIORNATA PERFETTA!</strong> Clima ideale: temperature gradevoli e zero pericoli imminenti. I tuoi peperoncini stanno ringraziando!</p>";
+                adviceHTML = "<p>✅ **Condizioni climatiche ottimali.** Temperature stabili e nessun rischio immediato per le piante.</p>";
                 status = "success";
             }
 
