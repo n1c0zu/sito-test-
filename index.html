@@ -548,7 +548,7 @@
       <div class="location-info">
         <h2 id="locationName">—</h2>
         <div class="coords" id="coordsDisplay"></div>
-        <div id="lastUpdated" style="font-size:10px;color:var(--text3);margin-top:3px;display:none;">
+        <div id="lastUpdated" style="font-size:12px;color:var(--text2);margin-top:3px;display:none;">
           <span class="refresh-dot" id="refreshDot"></span>
           <span id="lastUpdatedText"></span>
         </div>
@@ -562,7 +562,6 @@
     <div class="weather-badge">
       <span class="weather-icon" id="currentIcon">—</span>
       <span id="weatherDesc">—</span>
-      <span style="margin-left:auto;font-size:11px;color:var(--text2);opacity:0.7;" id="badgeUpdated"></span>
     </div>
 
     <!-- STAT GRID -->
@@ -686,8 +685,7 @@ function setLastUpdated() {
   const hh = now.getHours().toString().padStart(2,'0');
   const mm = now.getMinutes().toString().padStart(2,'0');
   document.getElementById('lastUpdatedText').textContent = `Agg. alle ${hh}:${mm}`;
-  const badgeUpd = document.getElementById('badgeUpdated');
-  if (badgeUpd) badgeUpd.textContent = `Agg. ${hh}:${mm}`;
+
   document.getElementById('lastUpdated').style.display = 'block';
   const dot = document.getElementById('refreshDot');
   dot.classList.add('pulsing');
