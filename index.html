@@ -623,7 +623,7 @@
         <div class="stat-sub" id="pressureSub"></div>
       </div>
       <div class="stat-card soil">
-        <div class="stat-label">Umidità suolo <span style="font-size:9px;opacity:0.6;font-weight:400;text-transform:none;">(stima)</span></div>
+        <div class="stat-label">Umidità suolo</div>
         <div class="stat-value" id="soilMoist">—<span class="stat-unit">%</span></div>
         <div class="stat-sub" id="soilMoistSub"></div>
       </div>
@@ -978,7 +978,7 @@ function renderUI(locName, lat, lon, elev, data) {
   const et3   = (d.et0_fao_evapotranspiration[0]||0) * 3;
   const soilMoist = Math.min(100, Math.max(5, Math.round(50 + (rain3 * 2.5) - (et3 * 1.8) + (soilT > 25 ? -8 : soilT < 12 ? +5 : 0))));
   document.getElementById('soilMoist').innerHTML = `${soilMoist}<span class="stat-unit">%</span>`;
-  document.getElementById('soilMoistSub').innerHTML = (soilMoist > 75 ? 'Substrato saturo' : soilMoist > 55 ? 'Ben idratato' : soilMoist > 35 ? 'Leggermente asciutto' : soilMoist > 20 ? 'Secco — irrigare' : 'Molto secco — urgente') + '<br><span style="font-size:9px;opacity:0.55;">Basata su piogge+ET₀, non su sensore</span>';
+  document.getElementById('soilMoistSub').innerText = soilMoist > 75 ? 'Substrato saturo' : soilMoist > 55 ? 'Ben idratato' : soilMoist > 35 ? 'Leggermente asciutto' : soilMoist > 20 ? 'Secco — irrigare' : 'Molto secco — urgente';
 
   // HOURLY
   renderHourly(h, hi);
@@ -1640,22 +1640,24 @@ function equalizeHeights() {
   statCards.forEach(el => { maxStat = Math.max(maxStat, el.offsetHeight); });
   statCards.forEach(el => { el.style.height = maxStat + 'px'; });
 
-  // Agro card: uguale all'interno di ogni riga (3 col)
-  const agroCards = document.querySelectorAll('.agro-card');
-  agroCards.forEach(el => { el.style.height = ''; });
+  // Agro card: raggruppa per riga usando offsetTop
+  // Reset altezze
+  const agroCards = Array.from(document.querySelectorAll('.agro-card'));
+  agroCards.forEach(el => { el.style.height = ''; el.style.minHeight = ''; });
 
-  // Raggruppa per riga: ogni 3 card (tenendo conto degli span)
-  // Calcola la top position di ogni card e raggruppa per valore simile
-  const rows = {};
+  // Dopo reset, raggruppa per offsetTop (arrotondato a 5px per tolleranza)
+  const rows = new Map();
   agroCards.forEach(el => {
-    const top = Math.round(el.getBoundingClientRect().top);
-    if (!rows[top]) rows[top] = [];
-    rows[top].push(el);
+    const top = Math.round(el.offsetTop / 5) * 5;
+    if (!rows.has(top)) rows.set(top, []);
+    rows.get(top).push(el);
   });
-  Object.values(rows).forEach(row => {
+
+  // Per ogni riga, imposta minHeight = altezza della card più alta
+  rows.forEach(row => {
     let maxH = 0;
     row.forEach(el => { maxH = Math.max(maxH, el.offsetHeight); });
-    row.forEach(el => { el.style.height = maxH + 'px'; });
+    row.forEach(el => { el.style.minHeight = maxH + 'px'; });
   });
 }
 </script>
