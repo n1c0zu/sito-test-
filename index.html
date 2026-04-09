@@ -259,12 +259,14 @@
 
   /* AGRO ANALYSIS */
   .agro-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 16px; margin-bottom: 32px;
+    align-items: stretch;
   }
   .agro-card {
     background: var(--card); border: 1px solid var(--card-border);
     border-radius: var(--radius); padding: 24px;
+    display: flex; flex-direction: column;
   }
   .agro-card-title {
     font-size: 15px; font-weight: 600; color: var(--text2);
@@ -473,7 +475,7 @@
 
     /* agro grid 1 colonna piena larghezza */
     .agro-grid { grid-template-columns: 1fr !important; gap: 10px; }
-    .agro-grid .agro-card { grid-column: 1 / -1 !important; }
+    .agro-grid .agro-card { grid-column: 1 !important; }
 
     /* alert */
     .alert { font-size: 15px; padding: 14px 16px; }
@@ -617,6 +619,11 @@
         <div class="stat-label">Pressione</div>
         <div class="stat-value" id="pressureDisplay">—<span class="stat-unit">hPa</span></div>
         <div class="stat-sub" id="pressureSub"></div>
+      </div>
+      <div class="stat-card soil">
+        <div class="stat-label">Umidità suolo</div>
+        <div class="stat-value" id="soilMoist">—<span class="stat-unit">%</span></div>
+        <div class="stat-sub" id="soilMoistSub"></div>
       </div>
     </div>
 
@@ -963,6 +970,14 @@ function renderUI(locName, lat, lon, elev, data) {
     document.getElementById('pressureSub').innerText = pressure > 1020 ? 'Alta — bel tempo stabile' : pressure > 1010 ? 'Normale' : pressure > 995 ? 'In calo — possibile peggioramento' : 'Bassa — maltempo probabile';
   }
 
+  // Umidità suolo stimata (0-100%)
+  // Modello semplice: parte da 50%, +piogge recenti, -ET0, influenzata da T suolo
+  const rain3 = (d.precipitation_sum[0]||0) + (d.precipitation_sum[1]||0) + (d.precipitation_sum[2]||0);
+  const et3   = (d.et0_fao_evapotranspiration[0]||0) * 3;
+  const soilMoist = Math.min(100, Math.max(5, Math.round(50 + (rain3 * 2.5) - (et3 * 1.8) + (soilT > 25 ? -8 : soilT < 12 ? +5 : 0))));
+  document.getElementById('soilMoist').innerHTML = `${soilMoist}<span class="stat-unit">%</span>`;
+  document.getElementById('soilMoistSub').innerText = soilMoist > 75 ? 'Substrato saturo' : soilMoist > 55 ? 'Ben idratato' : soilMoist > 35 ? 'Leggermente asciutto' : soilMoist > 20 ? 'Secco — irrigare' : 'Molto secco — urgente';
+
   // HOURLY
   renderHourly(h, hi);
 
@@ -970,7 +985,7 @@ function renderUI(locName, lat, lon, elev, data) {
   renderDaily(d);
 
   // AGRONOMY
-  renderAgronomy(c, h, d, hi, et0, uv, soilT, hum, sunrise, sunset, sunH);
+  renderAgronomy(c, h, d, hi, et0, uv, soilT, hum, sunrise, sunset, sunH, soilMoist);
 
   // ALERTS
   renderAlerts(c, h, d, hi, et0, uv, soilT, hum);
@@ -1050,7 +1065,7 @@ function renderDaily(d) {
 // =====================
 // AGRONOMY ENGINE
 // =====================
-function renderAgronomy(c, h, d, hi, et0, uv, soilT, hum, sunrise, sunset, sunH) {
+function renderAgronomy(c, h, d, hi, et0, uv, soilT, hum, sunrise, sunset, sunH, soilMoist) {
   const container = document.getElementById('agroGrid');
   container.innerHTML = '';
 
@@ -1321,7 +1336,7 @@ function renderAgronomy(c, h, d, hi, et0, uv, soilT, hum, sunrise, sunset, sunH)
   }).join('');
 
   container.innerHTML += `
-    <div class="agro-card" style="grid-column:span 2;">
+    <div class="agro-card" style="grid-column:span 3;">
       <div class="agro-card-title"><div class="agro-icon blue">💨</div>Vento — Analisi 7 Giorni</div>
       <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:16px;">${windBars}</div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;">
@@ -1415,9 +1430,53 @@ function renderAgronomy(c, h, d, hi, et0, uv, soilT, hum, sunrise, sunset, sunH)
       </div>
       ${safeIrrTime ? `<div style="${S.foot}">${safeIrrTime}</div>` : ''}
     </div>`;
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 10. BILANCIO IDRICO GIORNALIERO (7 giorni)
+  // ─────────────────────────────────────────────────────────────────────
+  // Ogni giorno: entrate (pioggia) vs uscite (ET₀). Deficit = rosso, surplus = blu
+  const giorni7 = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+  const balanceRows = d.time.slice(0,7).map((t, i) => {
+    const rain   = d.precipitation_sum[i] || 0;
+    const et     = d.et0_fao_evapotranspiration[i] || 0;
+    const net    = rain - et;
+    const name   = i === 0 ? 'Oggi' : giorni7[new Date(t + 'T12:00:00').getDay()];
+    const netCol = net >= 0 ? 'var(--blue)' : net > -3 ? 'var(--yellow)' : 'var(--red)';
+    const netStr = (net >= 0 ? '+' : '') + net.toFixed(1);
+    // barra: larghezza proporzionale, centrata sullo zero
+    const maxVal = 8; // mm scala
+    const rainPct = Math.min(100, (rain / maxVal) * 50);
+    const etPct   = Math.min(100, (et   / maxVal) * 50);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+      <span style="width:34px;font-size:12px;font-weight:600;color:var(--text2);flex-shrink:0;">${name}</span>
+      <div style="flex:1;display:flex;align-items:center;gap:0;height:10px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;">
+        <div style="width:${etPct}%;height:100%;background:var(--orange);border-radius:5px 0 0 5px;margin-left:${50-etPct}%;"></div>
+        <div style="width:${rainPct}%;height:100%;background:var(--blue);border-radius:0 5px 5px 0;"></div>
+      </div>
+      <span style="width:42px;text-align:right;font-size:12px;font-weight:700;color:${netCol};flex-shrink:0;">${netStr}</span>
+    </div>`;
+  }).join('');
+
+  const totalNet7 = d.time.slice(0,7).reduce((acc,_,i) => acc + (d.precipitation_sum[i]||0) - (d.et0_fao_evapotranspiration[i]||0), 0);
+  const totalNetCol = totalNet7 >= 0 ? 'var(--blue)' : totalNet7 > -10 ? 'var(--yellow)' : 'var(--red)';
+  const totalNetDesc = totalNet7 >= 5 ? 'Settimana in surplus idrico — ridurre l\'irrigazione.' : totalNet7 >= 0 ? 'Bilancio equilibrato.' : totalNet7 > -10 ? 'Leggero deficit — integrare con irrigazione.' : 'Forte deficit idrico — irrigazioni frequenti necessarie.';
+
+  container.innerHTML += `
+    <div class="agro-card">
+      <div class="agro-card-title"><div class="agro-icon blue">⚖️</div>Bilancio Idrico (7gg)</div>
+      <div style="display:flex;justify-content:space-between;${S.note}margin-bottom:8px;">
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--orange);border-radius:2px;display:inline-block;"></span>ET₀ (perdita)</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--blue);border-radius:2px;display:inline-block;"></span>Pioggia (entrata)</span>
+        <span>Netto (mm)</span>
+      </div>
+      ${balanceRows}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);">
+        <span style="${S.note}">Totale 7gg</span>
+        <span style="font-size:15px;font-weight:700;color:${totalNetCol};">${totalNet7 >= 0 ? '+' : ''}${totalNet7.toFixed(1)} mm</span>
+      </div>
+      <div style="${S.foot}">${totalNetDesc}</div>
+    </div>`;
 }
-// =====================
-// TEMPERATURE WINDOWS
 // =====================
 function getTemperatureWindows(h, hi, hours) {
   const cold = [], freeze = [];
