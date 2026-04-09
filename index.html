@@ -562,6 +562,7 @@
     <div class="weather-badge">
       <span class="weather-icon" id="currentIcon">—</span>
       <span id="weatherDesc">—</span>
+      <span style="margin-left:auto;font-size:11px;color:var(--text2);opacity:0.7;" id="badgeUpdated"></span>
     </div>
 
     <!-- STAT GRID -->
@@ -641,7 +642,7 @@
     <!-- DAILY -->
     <div class="section-title">Previsione 7 giorni</div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;align-items:center;font-size:12px;color:var(--text2);">
-      <span style="display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-block;width:24px;height:5px;border-radius:3px;background:linear-gradient(to right,var(--blue),var(--orange));flex-shrink:0;"></span>Range termico · posizione relativa alla settimana</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-block;width:24px;height:5px;border-radius:3px;background:linear-gradient(to right,var(--blue),var(--orange));flex-shrink:0;"></span>Range termico giornaliero (min→max). La posizione sulla barra è relativa alla settimana.</span>
       <span style="display:inline-flex;align-items:center;gap:5px;"><span style="color:var(--blue);">💧</span>Pioggia totale in mm</span>
     </div>
     <div class="daily-list" id="dailyForecast"></div>
@@ -685,6 +686,8 @@ function setLastUpdated() {
   const hh = now.getHours().toString().padStart(2,'0');
   const mm = now.getMinutes().toString().padStart(2,'0');
   document.getElementById('lastUpdatedText').textContent = `Agg. alle ${hh}:${mm}`;
+  const badgeUpd = document.getElementById('badgeUpdated');
+  if (badgeUpd) badgeUpd.textContent = `Agg. ${hh}:${mm}`;
   document.getElementById('lastUpdated').style.display = 'block';
   const dot = document.getElementById('refreshDot');
   dot.classList.add('pulsing');
