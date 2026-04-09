@@ -173,7 +173,7 @@
     padding: 18px 20px;
     position: relative; overflow: hidden;
     display: flex; flex-direction: column; justify-content: space-between;
-    min-height: 100px;
+    height: 110px;
   }
   .stat-card::before {
     content: '';
@@ -267,6 +267,7 @@
     background: var(--card); border: 1px solid var(--card-border);
     border-radius: var(--radius); padding: 24px;
     display: flex; flex-direction: column;
+    height: 100%;
   }
   .agro-card-title {
     font-size: 15px; font-weight: 600; color: var(--text2);
@@ -279,6 +280,7 @@
   .agro-icon.green  { background: rgba(126,200,160,0.08); }
   .agro-icon.yellow { background: rgba(250,204,21,0.12); }
   .agro-icon.red    { background: rgba(248,113,113,0.12); }
+  .agro-card > div:last-child { margin-top: auto; padding-top: 10px; }
 
   .risk-indicator { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .risk-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -996,6 +998,7 @@ function renderUI(locName, lat, lon, elev, data) {
   void weatherCard.offsetWidth;
   weatherCard.classList.add('anim-fade-up');
   setLastUpdated();
+  requestAnimationFrame(() => equalizeHeights());
 }
 
 // =====================
@@ -1624,6 +1627,36 @@ function renderAlerts(c, h, d, hi, et0, uv, soilT, hum) {
 function windDirName(deg) {
   const d = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
   return d[Math.round(deg / 22.5) % 16];
+}
+
+// =====================
+// EQUALIZZA ALTEZZE CARD
+// =====================
+function equalizeHeights() {
+  // Stat card: tutte alla stessa altezza
+  const statCards = document.querySelectorAll('.stat-card');
+  statCards.forEach(el => { el.style.height = ''; });
+  let maxStat = 0;
+  statCards.forEach(el => { maxStat = Math.max(maxStat, el.offsetHeight); });
+  statCards.forEach(el => { el.style.height = maxStat + 'px'; });
+
+  // Agro card: uguale all'interno di ogni riga (3 col)
+  const agroCards = document.querySelectorAll('.agro-card');
+  agroCards.forEach(el => { el.style.height = ''; });
+
+  // Raggruppa per riga: ogni 3 card (tenendo conto degli span)
+  // Calcola la top position di ogni card e raggruppa per valore simile
+  const rows = {};
+  agroCards.forEach(el => {
+    const top = Math.round(el.getBoundingClientRect().top);
+    if (!rows[top]) rows[top] = [];
+    rows[top].push(el);
+  });
+  Object.values(rows).forEach(row => {
+    let maxH = 0;
+    row.forEach(el => { maxH = Math.max(maxH, el.offsetHeight); });
+    row.forEach(el => { el.style.height = maxH + 'px'; });
+  });
 }
 </script>
 </body>
