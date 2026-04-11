@@ -384,6 +384,46 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+
+  /* DETTAGLIO GIORNO */
+  .day-detail {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-top: 8px;
+    animation: fadeUp 0.25s ease both;
+  }
+  .day-detail-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .day-detail-title {
+    font-size: 16px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .day-detail-close {
+    font-size: 13px; color: var(--text2); background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+    padding: 5px 14px; cursor: pointer; transition: all 0.15s;
+    font-family: var(--font); font-weight: 500;
+  }
+  .day-detail-close:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+  .day-detail-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px;
+  }
+  .day-detail-stat {
+    background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .day-detail-stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+  .day-detail-stat-value { font-size: 20px; font-weight: 700; color: var(--text); }
+  .daily-row.selected { border-color: rgba(109,186,144,0.35); background: rgba(109,186,144,0.04); }
+  @media (max-width: 640px) {
+    .day-detail-stats { grid-template-columns: repeat(2, 1fr); }
+    .day-detail { padding: 16px; }
+  }
+
   /* RESPONSIVE MOBILE */
   @media (max-width: 640px) {
     /* hero compatto */
@@ -890,6 +930,7 @@ function renderUI(locName, lat, lon, elev, data) {
   const c = data.current;
   const h = data.hourly;
   const d = data.daily;
+  _lastWeatherData = data;
 
   const now = new Date();
   let hi = h.time.findIndex(t => new Date(t) >= now);
@@ -1051,7 +1092,7 @@ function renderDaily(d) {
     const barWidth = ((tmax - tmin) / range * 100).toFixed(1);
 
     container.innerHTML += `
-      <div class="daily-row">
+      <div class="daily-row" data-day="${i}" style="cursor:pointer;" onclick="toggleDayDetail(this, ${i})">
         <div class="daily-row-top">
           <div class="d-day">${name}</div>
           <div class="d-icon">${icon}</div>
@@ -1504,6 +1545,126 @@ function getTemperatureWindows(h, hi, hours) {
   if (fSpan) freeze.push(fSpan);
   if (cSpan) cold.push(cSpan);
   return { cold, freeze };
+}
+
+
+// =====================
+// DETTAGLIO GIORNO
+// =====================
+let _lastWeatherData = null;
+
+function toggleDayDetail(rowEl, dayIdx) {
+  // Rimuovi dettagli esistenti
+  const existing = document.getElementById('day-detail-panel');
+  const wasThisRow = existing && existing.dataset.dayIdx == dayIdx;
+  if (existing) {
+    existing.remove();
+    document.querySelectorAll('.daily-row.selected').forEach(r => r.classList.remove('selected'));
+    if (wasThisRow) return; // secondo click chiude
+  }
+
+  if (!_lastWeatherData) return;
+  const d = _lastWeatherData.daily;
+  const h = _lastWeatherData.hourly;
+
+  rowEl.classList.add('selected');
+
+  // Trova le ore del giorno selezionato
+  const dayStr = d.time[dayIdx]; // es. "2025-04-15"
+  const hourStart = h.time.findIndex(t => t.startsWith(dayStr));
+  if (hourStart === -1) return;
+
+  const tMax = d.temperature_2m_max[dayIdx];
+  const tMin = d.temperature_2m_min[dayIdx];
+  const rain = d.precipitation_sum[dayIdx];
+  const uv   = d.uv_index_max[dayIdx];
+  const et0  = d.et0_fao_evapotranspiration[dayIdx];
+  const wind = d.windspeed_10m_max ? d.windspeed_10m_max[dayIdx] : '—';
+  const icon = getWeatherIcon(d.weathercode[dayIdx], 1);
+  const dayName = getDayName(d.time[dayIdx], dayIdx === 0);
+
+  // Sunrise/sunset del giorno
+  let srStr = '', ssStr = '';
+  if (d.sunrise && d.sunrise[dayIdx]) {
+    const sr = new Date(d.sunrise[dayIdx]);
+    srStr = sr.getHours().toString().padStart(2,'0') + ':' + sr.getMinutes().toString().padStart(2,'0');
+  }
+  if (d.sunset && d.sunset[dayIdx]) {
+    const ss = new Date(d.sunset[dayIdx]);
+    ssStr = ss.getHours().toString().padStart(2,'0') + ':' + ss.getMinutes().toString().padStart(2,'0');
+  }
+
+  // Build orario 24h
+  const maxW = Math.max(...h.wind_speed_10m.slice(hourStart, hourStart + 24));
+  let hoursHTML = '';
+  for (let i = hourStart; i < hourStart + 24 && i < h.time.length; i++) {
+    const hr = new Date(h.time[i]).getHours().toString().padStart(2,'0') + ':00';
+    const ico = getWeatherIcon(h.weathercode[i], h.is_day ? h.is_day[i] : 1);
+    const tmp = h.temperature_2m[i];
+    const rn  = h.precipitation_probability ? h.precipitation_probability[i] : 0;
+    const ws  = h.wind_speed_10m[i];
+    const pct = maxW > 0 ? Math.round((ws / maxW) * 100) : 0;
+    hoursHTML += `
+      <div class="hourly-card">
+        <div class="h-time">${hr}</div>
+        <div class="h-icon">${ico}</div>
+        <div class="h-temp">${tmp}°</div>
+        ${rn > 0 ? `<div class="h-rain">💧${rn}%</div>` : `<div style="height:18px"></div>`}
+        <div class="h-wind-bar"><div class="h-wind-fill" style="width:${pct}%"></div></div>
+        <div style="font-size:10px;color:var(--text3)">${ws}</div>
+      </div>`;
+  }
+
+  const panel = document.createElement('div');
+  panel.className = 'day-detail';
+  panel.id = 'day-detail-panel';
+  panel.dataset.dayIdx = dayIdx;
+  panel.innerHTML = `
+    <div class="day-detail-header">
+      <div class="day-detail-title">
+        <span style="font-size:22px;">${icon}</span>
+        ${dayName} — ${dayStr}
+      </div>
+      <button class="day-detail-close" onclick="closeDayDetail()">✕ Chiudi</button>
+    </div>
+    <div class="day-detail-stats">
+      <div class="day-detail-stat">
+        <div class="day-detail-stat-label">Temperatura</div>
+        <div class="day-detail-stat-value" style="color:var(--orange)">${tMax}° <span style="font-size:14px;color:var(--text3);font-weight:400;">/ ${tMin}°</span></div>
+      </div>
+      <div class="day-detail-stat">
+        <div class="day-detail-stat-label">Pioggia</div>
+        <div class="day-detail-stat-value" style="color:var(--blue)">${rain} <span style="font-size:13px;color:var(--text2);font-weight:400;">mm</span></div>
+      </div>
+      <div class="day-detail-stat">
+        <div class="day-detail-stat-label">UV max</div>
+        <div class="day-detail-stat-value">${uv}</div>
+      </div>
+      <div class="day-detail-stat">
+        <div class="day-detail-stat-label">Vento max</div>
+        <div class="day-detail-stat-value">${wind} <span style="font-size:13px;color:var(--text2);font-weight:400;">km/h</span></div>
+      </div>
+      <div class="day-detail-stat">
+        <div class="day-detail-stat-label">ET₀</div>
+        <div class="day-detail-stat-value">${et0} <span style="font-size:13px;color:var(--text2);font-weight:400;">mm</span></div>
+      </div>
+      ${srStr ? `<div class="day-detail-stat">
+        <div class="day-detail-stat-label">Alba / Tramonto</div>
+        <div class="day-detail-stat-value" style="font-size:15px;">${srStr} – ${ssStr}</div>
+      </div>` : ''}
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Andamento orario</div>
+    <div class="hourly-scroll">${hoursHTML}</div>`;
+
+  // Inserisci dopo la riga cliccata
+  rowEl.insertAdjacentElement('afterend', panel);
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeDayDetail() {
+  const p = document.getElementById('day-detail-panel');
+  if (p) p.remove();
+  document.querySelectorAll('.daily-row.selected').forEach(r => r.classList.remove('selected'));
 }
 
 // =====================
